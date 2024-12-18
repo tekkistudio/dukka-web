@@ -1,9 +1,8 @@
-// src/app/admin/dashboard/page.tsx
+// src/app/(admin)/dashboard/page.tsx
 'use client'
 
 import dynamic from 'next/dynamic'
 import AuthGuard from '@/components/AuthGuard'
-import AdminNavbar from '@/components/admin/AdminNavbar'
 
 const WaitlistStats = dynamic(
   () => import('@/components/waitlist/WaitlistStats'),
@@ -15,10 +14,9 @@ const ContactMessages = dynamic(
   { ssr: false }
 )
 
-export default function DashboardPage() {
+export default function AdminDashboardPage() {
   return (
     <AuthGuard>
-      <AdminNavbar />
       <div className="container mx-auto px-4 py-8 space-y-8">
         <WaitlistStats />
         <ContactMessages />

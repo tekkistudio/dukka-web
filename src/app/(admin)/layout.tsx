@@ -1,23 +1,23 @@
+// src/app/(admin)/layout.tsx
 'use client'
 
-import AdminNavbar from '../../components/admin/AdminNavbar'
+import AdminNavbar from '@/components/admin/AdminNavbar'
 import { usePathname } from 'next/navigation'
 
 export default function AdminLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   const pathname = usePathname()
-  // Simple check without hooks
   const isLoginPage = pathname === '/admin/login'
 
   return (
     <div className="min-h-screen bg-gray-50">
       {!isLoginPage && <AdminNavbar />}
-      <div className={`${!isLoginPage ? 'py-6' : ''}`}>
+      <main className={`mx-auto max-w-7xl ${!isLoginPage ? 'px-4 sm:px-6 lg:px-8 py-6' : ''}`}>
         {children}
-      </div>
+      </main>
     </div>
   )
 }

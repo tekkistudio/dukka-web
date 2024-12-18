@@ -21,14 +21,21 @@ export default function WaitlistChat({ onClose }: WaitlistChatProps) {
   ])
   const [isTyping, setIsTyping] = React.useState(false)
   const [inputMessage, setInputMessage] = React.useState('')
+  const [currentStep, setCurrentStep] = React.useState(0)
   const [userData, setUserData] = React.useState<UserData>({
     full_name: '',
     email: '',
     phone: '',
-    business_type: ''
+    business_type: '',
+    created_at: new Date().toISOString()
   })
-  const [currentStep, setCurrentStep] = React.useState(0)
   const chatRef = React.useRef<HTMLDivElement>(null)
+  const userDataRef = React.useRef(userData)
+
+  // Mettre à jour la référence quand userData change
+  React.useEffect(() => {
+    userDataRef.current = userData
+  }, [userData])
 
   const scrollToBottom = (): void => {
     if (chatRef.current) {
@@ -131,27 +138,37 @@ export default function WaitlistChat({ onClose }: WaitlistChatProps) {
       }
 
       const question = waitlistChat.questions[currentStep - 1]
+      const trimmedText = text.trim()
       
       switch (question.id) {
         case 'full_name':
-          setUserData(prev => ({ ...prev, full_name: text }))
+          setUserData(prev => ({ ...prev, full_name: trimmedText }))
           break
         case 'email':
-          if (!text.includes('@')) {
+          if (!trimmedText.includes('@')) {
             await addMessage({
               type: 'assistant',
               content: "Cette adresse email ne semble pas valide. Pouvez-vous la vérifier ?"
             })
             return
           }
-          setUserData(prev => ({ ...prev, email: text }))
+          setUserData(prev => ({ ...prev, email: trimmedText }))
           break
         case 'phone':
-          const updatedData = { ...userData, phone: text }
-          setUserData(updatedData)
+          const phoneNumber = trimmedText.replace(/\s+/g, '')
+          if (phoneNumber.length < 8) {
+            await addMessage({
+              type: 'assistant',
+              content: "Ce numéro semble trop court. Assurez-vous d'inclure l'indicatif du pays."
+            })
+            return
+          }
+          setUserData(prev => ({ ...prev, phone: phoneNumber }))
           break
       }
 
+      // Attendre que le state soit mis à jour
+      await new Promise(resolve => setTimeout(resolve, 100))
       await handleNextStep()
     } catch (error) {
       console.error('Erreur lors du traitement de la réponse:', error)
@@ -164,32 +181,32 @@ export default function WaitlistChat({ onClose }: WaitlistChatProps) {
   const handleNextStep = async (): Promise<void> => {
     try {
       if (currentStep >= waitlistChat.questions.length) {
-        console.log('Debug - Final user data before save:', userData)
-        
+        // Utiliser la référence au lieu du state
         const finalUserData = {
-          ...userData,
+          ...userDataRef.current,
           created_at: new Date().toISOString()
         }
-  
+
+        console.log('Debug - Final user data before save:', finalUserData)
+
         const { error } = await supabase
           .from('waitlist')
           .insert([finalUserData])
-  
+
         if (error) {
-          console.error('Waitlist save error:', error)
+          console.error('Erreur Supabase:', error)
           throw error
         }
-  
+
         await addMessage({
           type: 'assistant',
-          content: waitlistChat.success.message({ name: userData.full_name })
+          content: waitlistChat.success.message({ name: finalUserData.full_name })
         })
         await addMessage({
           type: 'user-choices',
           content: ['Fermer']
         })
-  
-        // Ajoutez un délai avant de fermer automatiquement
+
         setTimeout(() => {
           onClose()
         }, 3000)
@@ -198,7 +215,7 @@ export default function WaitlistChat({ onClose }: WaitlistChatProps) {
 
       const nextQuestion = waitlistChat.questions[currentStep]
       const questionText = typeof nextQuestion.question === 'function' 
-        ? nextQuestion.question({ name: userData.full_name })
+        ? nextQuestion.question({ name: userDataRef.current.full_name })
         : nextQuestion.question
 
       await addMessage({
@@ -238,7 +255,7 @@ export default function WaitlistChat({ onClose }: WaitlistChatProps) {
               transition={{ duration: 2, repeat: Infinity }}
             />
             <span className="text-sm text-gray-600" id="waitlist-dialog-title">
-              L'Assitant Dukka est en ligne
+              L'Assistant Dukka est en ligne
             </span>
           </div>
           <button 

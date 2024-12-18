@@ -1,4 +1,3 @@
-// apps/web/src/components/sections/demo/data.ts
 export interface Media {
   type: 'image' | 'video';
   url: string;
@@ -63,7 +62,6 @@ export const scenarios: Scenario[] = [
 ];
 
 export function buildConversation(scenario: Scenario) {
-  const priceQuestion = scenario.genre === 'masculin' ? "Quel est son prix ?" : "Quel est son prix ?";
   return [
     {
       type: 'assistant',
@@ -72,9 +70,9 @@ export function buildConversation(scenario: Scenario) {
     {
       type: 'user-choices',
       choices: [
-        "J'aimerais plus d'informations",
+        "Je veux en savoir plus",
         "Je souhaite commander",
-        priceQuestion
+        scenario.genre === 'masculin' ? "Combien coûte-t-il ?" : "Combien coûte-t-elle ?"
       ]
     }
   ];
@@ -82,116 +80,121 @@ export function buildConversation(scenario: Scenario) {
 
 export const botResponses = {
   'viens-on-sconnait': {
-    'infos': [{
-      type: 'assistant',
-      content: "Ce jeu a été spécialement conçu pour les couples mariés qui souhaitent raviver la passion, améliorer leur communication et renforcer votre lien conjugal, peu importe leur nombre d'années de mariage. Il contient 150 cartes de questions pour :",
-      media: [{
-        type: 'image',
-        url: '/images/products/maries-1.jpg',
-        alt: 'Jeu pour les couples mariés',
-        caption: 'Le jeu pour les couples mariés'
-      }]
-    }, {
-      type: 'assistant',
-      content: "• redécouvrir votre partenaire\n• discuter de sujets cruciaux\n• renouveler la connexion",
-      media: [{
-        type: 'image',
-        url: '/images/products/maries-2.jpg',
-        alt: 'Cartes du jeu pour les couples mariés',
-        caption: 'Aperçu des cartes du jeu'
-      }]
-    }, {
-      type: 'assistant',
-      content: "Que souhaitez-vous faire ?"
-    }, {
-      type: 'user-choices',
-      choices: [
-        "Je souhaite commander",
-        "Combien coûte-t-il ?"
-      ]
-    }],
-    'prix': [{
-      type: 'assistant',
-      content: "Il coûte 14 000 FCFA, et la livraison est gratuite à Dakar. Dans les autres villes du Sénégal, elle est à 3000F CFA."
-    }, {
-      type: 'assistant',
-      content: "Nous proposons des remises selon la quantité commandée :\n• 2 exemplaires : -10%\n• 3 exemplaires : -15%\n• Plus de 3 exemplaires : -20%\n\nDe plus, une remise de 10% est appliquée sur le jeu pour les couples non mariés si vous l'ajoutez à votre commande.",
-      media: [{
-        type: 'image',
-        url: '/images/products/couples-1.jpg',
-        alt: 'Jeu pour les couples non mariés',
-        caption: 'Le jeu pour les couples non mariés'
-      }]
-    }, {
-      type: 'assistant',
-      content: "Que souhaitez-vous faire ?"
-    }, {
-      type: 'user-choices',
-      choices: [
-        "Poursuivre ma commande",
-        "Ajouter le jeu pour les couples non mariés"
-      ]
-    }]
+    'infos': [
+      {
+        type: 'assistant',
+        content: `Le jeu VIENS ON S'CONNAÎT - Entre Mariés a été spécialement conçu pour les couples mariés qui souhaitent renforcer leur lien conjugal et raviver la passion dans leur relation. Il offre une opportunité unique d'explorer les aspects les plus intimes et significatifs de votre vie à deux, tout en créant des moments de connexion authentique et de croissance mutuelle. Le jeu contient 150 cartes réparties en 3 catégories :
+💝 Connexion Émotionnelle 
+💫 Projets & Rêves 
+💑 Intimité & Complicité 
+
+Chaque carte pose une question ou propose une activité pour renforcer votre lien conjugal.`,
+        media: [{
+          type: 'image',
+          url: '/images/products/maries-1.jpg',
+          alt: 'Jeu pour les couples mariés',
+          caption: 'Le jeu pour les couples mariés'
+        }]
+      },
+      {
+        type: 'assistant',
+        content: "Que souhaitez-vous faire ?"
+      },
+      {
+        type: 'user-choices',
+        choices: [
+          "Voir les packs disponibles",
+          "Commander maintenant",
+          "Découvrir les autres jeux"
+        ]
+      }
+    ],
+    'prix': [
+      {
+        type: 'assistant',
+        content: `Le jeu coûte 14 000F CFA. Cependant, vous avez la possibilité d'obtenir une réduction en commandant plus. Voici nos offres :
+
+• 1 jeu : 14 000 FCFA
+• Pack Duo (-10%) : 25 200 FCFA
+• Pack Trio (-15%) : 35 700 FCFA
+• Pack Comité (-20%) : plus de 3 jeux
+
+🎁 Vous pouvez ajouter le jeu pour les Couples non mariés pour composer le Pack Duo !
+La livraison est gratuite à Dakar. Dans les autres villes du Sénégal 🇸🇳 et à Abidjan 🇨🇮, elle est à 3000 FCFA.`,
+      },
+      {
+        type: 'user-choices',
+        choices: [
+          "Commander 1 jeu",
+          "Voir les packs",
+          "Ajouter le jeu pour les non mariés"
+        ]
+      }
+    ]
   },
   'shop-mode': {
-    'infos': [{
-      type: 'assistant',
-      content: "Cette robe Bogolan est une création unique qui allie modernité et tradition :",
-      media: [{
-        type: 'image',
-        url: '/images/products/robe-bogolan.webp',
-        alt: 'Robe en tissu Bogolan',
-        caption: 'Notre robe signature en Bogolan'
-      }]
-    }, {
-      type: 'assistant',
-      content: "• Tissu Bogolan authentique du Mali\n• Coupe moderne adaptable\n• Tailles disponibles: S à XXL\n• Personnalisation possible"
-    }, {
-      type: 'assistant',
-      content: "Que souhaitez-vous faire ?"
-    }, {
-      type: 'user-choices',
-      choices: [
-        "Je souhaite commander",
-        "Combien coûte-t-elle ?"
-      ]
-    }],
-    'prix': [{
-      type: 'assistant',
-      content: "La robe est à 35 000 FCFA. La livraison est offerte à partir de 54 000 FCFA d'achat, sinon elle est à 3 000 FCFA."
-    }, {
-      type: 'assistant',
-      content: "Pour atteindre ce montant, vous pouvez :\n• commander deux robes (-15% sur la deuxième)\n• ajouter des accessoires assortis",
-      media: [
-        {
+    'infos': [
+      {
+        type: 'assistant',
+        content: `Cette robe Bogolan est une création unique qui allie modernité et tradition. Elle est confectionnée avec :
+
+• Tissu Bogolan authentique du Mali
+• Coupe moderne et élégante
+• Finitions soignées à la main
+• Doublure en coton respirant
+
+Vous pouvez l'acheter toute seule ou opter pour l'un de nos ensembles.`,
+        media: [{
           type: 'image',
-          url: '/images/products/sac-bogolan.webp',
-          alt: 'Sac en Bogolan',
-          caption: 'Sac assorti (25 000 FCFA)'
-        },
-        {
-          type: 'image',
-          url: '/images/products/echarpe.webp',
-          alt: 'Écharpe assortie',
-          caption: 'Écharpe (15 000 FCFA)'
-        }
-      ]
-    }, {
-      type: 'assistant',
-      content: "Que souhaitez-vous faire ?"
-    }, {
-      type: 'user-choices',
-      choices: [
-        "Poursuivre ma commande",
-        "Commander deux robes",
-        "Voir les accessoires"
-      ]
-    }]
+          url: '/images/products/robe-bogolan.webp',
+          alt: 'Robe en tissu Bogolan',
+          caption: 'Notre robe signature en Bogolan'
+        }]
+      },
+      {
+        type: 'user-choices',
+        choices: [
+          "Voir les ensembles",
+          "Commander la robe",
+          "Voir les prix"
+        ]
+      }
+    ],
+    'prix': [
+      {
+        type: 'assistant',
+        content: `La robe seule est à 35 000 FCFA. Cependant, vous pouvez bénéficier des offres suivantes :
+
+• Ensemble Complet (Robe + Sac + Écharpe) : 68 000 FCFA au lieu de 75 000 FCFA
+• Ensemble Essentiel (Robe + Sac) : 55 000 FCFA au lieu de 60 000 FCFA
+• Duo Élégant (Robe + Écharpe) : 45 000 FCFA au lieu de 50 000 FCFA
+
+💫 La livraison est offerte sur tous les ensembles !`
+      },
+      {
+        type: 'assistant',
+        content: `Articles individuels :
+• Robe Bogolan : 35 000 FCFA
+• Sac assorti : 25 000 FCFA
+• Écharpe : 15 000 FCFA
+• Bandeau : 8 000 FCFA
+
+La livraison est offerte à partir de 54 000 FCFA d'achat.`,
+      },
+      {
+        type: 'user-choices',
+        choices: [
+          "Choisir un ensemble",
+          "Commander la robe",
+          "Voir les accessoires"
+        ]
+      }
+    ]
   },
   'restaurant': {
     'infos': [{
       type: 'assistant',
-      content: "Notre box est préparée chaque jour avec des produits frais et locaux :",
+      content: "Notre box signature est préparée chaque jour avec des produits frais et locaux. Elle contient :",
       media: [{
         type: 'image',
         url: '/images/products/box-de-snacks.webp',
@@ -200,116 +203,141 @@ export const botResponses = {
       }]
     }, {
       type: 'assistant',
-      content: "• Ingrédients 100% naturels\n• Recettes traditionnelles revisitées\n• Portions généreuses\n• Packaging écologique"
-    }, {
-      type: 'assistant',
-      content: "Que souhaitez-vous faire ?"
+      content: `• Une sélection de snacks variés et équilibrés
+- Des ingrédients 100% naturels et locaux
+- Des portions généreuses
+- Un packaging écologique`,
     }, {
       type: 'user-choices',
       choices: [
         "Je souhaite commander",
-        "Quel est son prix ?"
+        "Voir les prix",
+        "Voir les accompagnements"
       ]
     }],
     'prix': [{
       type: 'assistant',
-      content: "La box individuelle est à 13 000 FCFA, livraison incluse."
-    }, {
-      type: 'assistant',
-      content: "Nous proposons des réductions sur les commandes multiples :\n• 2 box : -10%\n• 3 box et plus : -15%"
-    }, {
-      type: 'assistant',
-      content: "Que souhaitez-vous faire ?"
+      content: `Voici nos offres pour la box de snacks :
+
+- 1 box : 13 000 FCFA
+- 2 box : 23 400 FCFA (-10%)
+- 3 box et plus : -15%
+
+Les boissons :
+- Bissap frais : 2 000 FCFA
+- Gingembre frais : 2 000 FCFA
+- Cocktail detox : 2 500 FCFA
+
+🚚 La livraison est gratuite à Dakar 🇸🇳`
     }, {
       type: 'user-choices',
       choices: [
-        "Commander 1 box",
-        "Commander 2 box (-10%)",
-        "Commander 3 box (-15%)"
+        "Commander maintenant",
+        "En savoir plus",
+        "Voir les boissons"
       ]
     }]
   }
 };
 
-export const otherProducts = [{
-  type: 'assistant',
-  content: "Voici nos autres jeux disponibles :\n\n• VIENS ON S'CONNAÎT - En Famille (14 000 FCFA) : conçu pour renforcer les relations entre les Parents et les Enfants\n• VIENS ON S'CONNAÎT - Entre Amis (14 000 FCFA) : conçu pour les amis qui veulent mieux se connaître et passer un moment fun et agréable ensemble.",
-  media: [
-    {
-      type: 'image',
-      url: '/images/products/famille-1.jpg',
-      alt: 'Jeu pour la famille',
-      caption: 'Le Jeu pour la Famille'
-    },
-    {
-      type: 'image',
-      url: '/images/products/amis-1.jpg',
-      alt: 'Jeu entre amis',
-      caption: 'Le Jeu pour les Amis'
-    }
-  ]
-}, {
-  type: 'user-choices',
-  choices: [
-    "Ajouter le jeu pour la Famille",
-    "Ajouter le jeu pour les Amis",
-    "Non merci, continuer ma commande"
-  ]
-}];
+export const otherProducts = [
+  {
+    type: 'assistant',
+    content: `Découvrez nos autres jeux de la gamme Viens On s'Connaît :
+
+• En Famille (14 000 FCFA) : Renforcez les liens Parents-Enfants avec 150 cartes spécialement conçues pour créer des moments de partage uniques
+• Entre Amis (14 000 FCFA) : Approfondissez vos amitiés et créez des souvenirs mémorables avec ce jeu qui mélange questions profondes et moments fun`,
+    media: [
+      {
+        type: 'image',
+        url: '/images/products/famille-1.jpg',
+        alt: 'Jeu pour la famille',
+        caption: 'Le Jeu pour la Famille'
+      },
+      {
+        type: 'image',
+        url: '/images/products/amis-1.jpg',
+        alt: 'Jeu entre amis',
+        caption: 'Le Jeu pour les Amis'
+      }
+    ]
+  },
+  {
+    type: 'user-choices',
+    choices: [
+      "Ajouter le jeu pour la Famille",
+      "Ajouter le jeu pour les Amis",
+      "Non merci, continuer ma commande"
+    ]
+  }
+];
 
 export const checkoutFlow = {
   quantity: [{
     type: 'assistant',
-    content: "Entendu ! Combien d'exemplaires souhaitez-vous commander ?"
+    content: "Parfait ! Combien d'exemplaires souhaitez-vous commander ?"
   }, {
     type: 'user-choices',
     choices: ["1 exemplaire", "2 exemplaires", "3 exemplaires", "Plus"]
   }],
+  
   additionalProducts: [{
     type: 'assistant',
-    content: "C'est noté ! Savez-vous que nous avons d'autres jeux qui pourraient vous intéresser ?"
+    content: "Excellent choix ! 🎉 Savez-vous que nous avons d'autres jeux qui pourraient vous intéresser ?"
   }, {
     type: 'user-choices',
     choices: ["Voir les autres jeux", "Continuer avec ma commande"]
   }],
+  
   contactInfo: [{
     type: 'assistant',
-    content: "Pour procéder à la livraison de votre commande, j'aurais besoin de quelques informations. Puis-je avoir votre nom complet ?"
+    content: "Pour procéder à la livraison de votre commande, j'aurais besoin de quelques informations. Commençons par la base : quel est votre nom complet ?"
   }],
+  
   address: [{
     type: 'assistant',
-    content: ({ firstName }) => `Merci ${firstName} ! Dans quelle ville habitez-vous ?`
+    content: ({ firstName }) => `Merci ${firstName} ! 🙂 Dans quelle ville habitez-vous ?`
   }],
+  
   deliveryAddress: [{
     type: 'assistant',
     content: ({ city }) => `Parfait ! Quelle est votre adresse exacte à ${city} ?`
   }],
+  
   phone: [{
     type: 'assistant',
-    content: ({ firstName }) => `Super ${firstName} ! Quel est votre numéro de téléphone ?`
+    content: ({ firstName }) => `Super ${firstName} ! Quel est votre numéro de téléphone 📱 ? C'est important pour la livraison.`
   }],
+  
   paymentMethod: [{
     type: 'assistant',
     content: ({ orderData, activeScenario, totalAmount }) => {
-      let deliveryCost = orderData.city.toLowerCase() === 'dakar' ? 0 : 3000;
-      let total = totalAmount;
+      const deliveryCost = orderData.city.toLowerCase() === 'dakar' ? 0 : 3000;
       
-      return `Voici le récapitulatif de votre commande :\n${orderData.orderDetails}\n\n` +
-        `Livraison : ${orderData.city}\n` +
-        `Adresse : ${orderData.address}\n` +
-        `Coût de la livraison : ${deliveryCost} F CFA\n` +
-        `Téléphone : ${orderData.phone}\n\n` +
-        `Total : ${total.toLocaleString()} F CFA\n\n` +
-        `Par quel moyen souhaitez-vous payer ?\n\n` +
-        `⚠️ Les personnes qui payent à l'avance sont prioritaires pour la livraison.`
+      return `📋 Voici le récapitulatif de votre commande :
+
+${orderData.orderDetails}
+
+📍 Informations de livraison :
+• Ville : ${orderData.city}
+• Adresse : ${orderData.address}
+• Frais de livraison : ${deliveryCost} F CFA
+• Téléphone : ${orderData.phone}
+
+💰 Total à payer : ${totalAmount.toLocaleString()} F CFA
+
+Choisissez votre mode de paiement ci-dessous.
+
+⚠️ Les personnes qui paient à l'avance sont prioritaires pour la livraison.`
     }
   }, {
     type: 'user-choices',
     choices: ["Wave", "Orange Money (bientôt disponible)", "Free Money (bientôt disponible)", "Paiement à la livraison"]
   }],
+  
   wavePayment: [{
     type: 'assistant',
-    content: "Vous avez choisi de payer avec Wave. Cliquez sur le bouton ci-dessous pour procéder au paiement."
+    content: "Super ! Vous avez choisi de payer avec Wave. Cliquez sur le bouton ci-dessous pour procéder au paiement sécurisé et sans frais. 🔒"
   }]
 };
 
@@ -317,32 +345,42 @@ export const shopModeFlow = {
   ...checkoutFlow,
   size: [{
     type: 'assistant',
-    content: "Quelle taille souhaitez-vous commander ?"
+    content: `Pour vous aider à choisir la bonne taille de la robe Bogolan :
+
+📏 Voici notre guide des tailles :
+• S : 36-38 (tour de poitrine : 85-90cm)
+• M : 38-40 (tour de poitrine : 90-95cm)
+• L : 40-42 (tour de poitrine : 95-100cm)
+• XL : 42-44 (tour de poitrine : 100-105cm)
+• XXL : 44-46 (tour de poitrine : 105-110cm)
+
+Quelle taille souhaitez-vous commander ?`
   }, {
     type: 'user-choices',
     choices: ["S", "M", "L", "XL", "XXL"]
   }],
+  
   accessories: [{
     type: 'assistant',
-    content: "Voici nos accessoires assortis :\n• Sac en Bogolan (25 000 FCFA)\n• Écharpe assortie (15 000 FCFA)\n• Bandeau coordonné (8 000 FCFA)",
+    content: "Pour sublimer votre tenue, voici notre sélection d'accessoires assortis :",
     media: [
       {
         type: 'image',
         url: '/images/products/sac-bogolan.webp',
         alt: 'Sac en Bogolan',
-        caption: 'Sac en Bogolan'
+        caption: 'Sac en Bogolan (25 000 FCFA)'
       },
       {
         type: 'image',
         url: '/images/products/echarpe.webp',
         alt: 'Écharpe assortie',
-        caption: 'Écharpe assortie'
+        caption: 'Écharpe (15 000 FCFA)'
       },
       {
         type: 'image',
         url: '/images/products/bandeau.webp',
         alt: 'Bandeau coordonné',
-        caption: 'Bandeau coordonné'
+        caption: 'Bandeau (8 000 FCFA)'
       }
     ]
   }, {
@@ -360,21 +398,48 @@ export const restaurantFlow = {
   ...checkoutFlow,
   quantity: [{
     type: 'assistant',
-    content: "Pour quelle heure souhaitez-vous être livré(e) ?"
+    content: ({previousOrders} = {}) => `
+${previousOrders ? "Ravi de vous revoir ! " : ""}Notre box signature contient une sélection de snacks préparés avec des produits frais du jour 😋
+
+Combien souhaitez-vous en commander ?
+• 1 box : 13 000 FCFA
+• 2 box : 23 400 FCFA (-10%)
+• 3 box : 33 150 FCFA (-15%)`
+  }, {
+    type: 'user-choices',
+    choices: ["1 box", "2 box (-10%)", "3 box (-15%)", "Plus"]
+  }],
+  
+  timeSlot: [{
+    type: 'assistant',
+    content: ({boxQuantity}) => `Super ! Pour vos ${boxQuantity} box${boxQuantity > 1 ? 's' : ''}, à quelle heure souhaitez-vous recevoir votre commande ? 🕒`
   }, {
     type: 'user-choices',
     choices: ["12h - 13h", "13h - 14h", "19h - 20h", "20h - 21h"]
   }],
+  
   addons: [{
     type: 'assistant',
-    content: "Souhaitez-vous ajouter des boissons ?\n• Bissap frais (2 000 FCFA)\n• Gingembre frais (2 000 FCFA)\n• Cocktail detox (2 500 FCFA)"
+    content: "Et pour accompagner vos snacks, nous avons une sélection de boissons fraîches faites maison 🥤\n\n• Bissap frais (2 000 FCFA)\n• Gingembre frais (2 000 FCFA)\n• Cocktail detox (2 500 FCFA)"
   }, {
     type: 'user-choices',
     choices: [
-      "Ajouter Bissap",
-      "Ajouter Gingembre",
-      "Ajouter Cocktail detox",
+      "Ajouter le Bissap",
+      "Ajouter le Gingembre",
+      "Ajouter le Cocktail detox",
       "Continuer sans boisson"
     ]
+  }],
+  
+  orderSummary: [{
+    type: 'assistant',
+    content: ({ orderData, totalAmount }) => `
+Voici le récapitulatif de votre commande 📝
+
+${orderData.quantity} Box ${orderData.quantity > 1 ? `(-${orderData.quantity >= 3 ? '15' : '10'}%)` : ''}
+${orderData.drinks.length > 0 ? `\nBoissons :\n${orderData.drinks.map(drink => `• ${drink}`).join('\n')}` : ''}
+
+Livraison : ${orderData.deliveryTime}
+Total : ${totalAmount.toLocaleString()} FCFA`
   }]
 };

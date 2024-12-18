@@ -14,8 +14,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="fixed top-0 left-0 right-0 z-50 bg-dukka-primary text-white h-10">
           <div className="container mx-auto h-full">
             <div className="relative flex items-center justify-center h-full px-4">
-              <p className="text-base font-medium">
-                Dukka, la Meilleure Alternative à Shopify en Afrique
+              <p className="text-sm font-medium">
+                La Meilleure Alternative à Shopify en Afrique
               </p>
               <button
                 onClick={() => setShowAnnouncement(false)}

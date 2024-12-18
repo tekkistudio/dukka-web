@@ -1,4 +1,3 @@
-// apps/web/src/components/sections/demo/interactions/ChoiceButtons.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -23,9 +22,17 @@ const ChoiceButtons = ({
     }
   };
 
-  const item = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 }
+  const buttonVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    })
   };
 
   const getButtonStyle = (choice: string) => {
@@ -46,18 +53,25 @@ const ChoiceButtons = ({
       initial="hidden"
       animate="show"
     >
-      {choices.map((choice, index) => (
-        <motion.button
-          key={`${choice}-${index}`}
-          variants={item}
-          onClick={() => !choice.includes('bientôt') && onSelect(choice)}
-          className={getButtonStyle(choice)}
-          whileHover={!choice.includes('bientôt') ? { scale: 1.02 } : undefined}
-          whileTap={!choice.includes('bientôt') ? { scale: 0.98 } : undefined}
-        >
-          {choice}
-        </motion.button>
-      ))}
+      {choices.map((choice, index) => {
+        const isDisabled = choice.includes('bientôt');
+        return (
+          <motion.button
+            key={`${choice}-${index}`}
+            custom={index}
+            variants={buttonVariants}
+            initial="hidden"
+            animate="visible"
+            onClick={() => !isDisabled && onSelect(choice)}
+            className={getButtonStyle(choice)}
+            whileHover={!isDisabled ? { scale: 1.02 } : undefined}
+            whileTap={!isDisabled ? { scale: 0.98 } : undefined}
+            disabled={isDisabled}
+          >
+            {choice}
+          </motion.button>
+        );
+      })}
     </motion.div>
   );
 };

@@ -1,14 +1,12 @@
+// src/app/layout.tsx
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ClientProvider } from '@/components/providers/ClientProvider'
 import { WaitlistProvider } from '@/contexts/WaitlistContext'
-import MainLayout from '@/components/layout/MainLayout'
-import { headers } from 'next/headers'
 
 const inter = Inter({ subsets: ['latin'] })
 
-// Metadata pour le SEO
 export const metadata: Metadata = {
   title: {
     default: 'Dukka - La Meilleure Alternative à Shopify en Afrique',
@@ -42,26 +40,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const headersList = headers()
-  const pathname = headersList.get("x-pathname") || "/"
-  const isAdmin = pathname.startsWith('/admin')
-
   return (
     <html lang="fr" className="scroll-smooth">
-      <body className={`${inter.className} antialiased`}>
+      <body className={inter.className}>
         <WaitlistProvider>
           <ClientProvider>
-            {isAdmin ? (
-              // Layout admin simple
-              <div className="min-h-screen bg-gray-50">
-                {children}
-              </div>
-            ) : (
-              // Layout public avec navigation et footer
-              <MainLayout>
-                {children}
-              </MainLayout>
-            )}
+            {children}
           </ClientProvider>
         </WaitlistProvider>
       </body>
