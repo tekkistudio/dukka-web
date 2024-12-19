@@ -1,25 +1,22 @@
-// src/app/(admin)/dashboard/page.tsx
 'use client'
 
 import dynamic from 'next/dynamic'
 import AuthGuard from '@/components/AuthGuard'
 
-const WaitlistStats = dynamic(
-  () => import('@/components/waitlist/WaitlistStats'),
-  { ssr: false }
-)
-
-const ContactMessages = dynamic(
-  () => import('@/components/admin/ContactMessages'),
+const DashboardStats = dynamic(
+  () => import('@/components/admin/DashboardStats'),
   { ssr: false }
 )
 
 export default function AdminDashboardPage() {
   return (
     <AuthGuard>
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        <WaitlistStats />
-        <ContactMessages />
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Dukka Admin</h1>
+          <p className="text-gray-500">Vue d'ensemble des données</p>
+        </div>
+        <DashboardStats />
       </div>
     </AuthGuard>
   )

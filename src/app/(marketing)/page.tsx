@@ -3,7 +3,7 @@ import { HeroSection } from '@/components/sections/HeroSection'
 import { HowItWorksSection } from '@/components/sections/HowItWorksSection'
 import { FeaturesSection } from '@/components/sections/FeaturesSection'
 import { DemoSection } from '@/components/sections/DemoSection'
-import { PricingSection } from '@/components/sections/PricingSection'
+import { ComparisonSection } from '@/components/sections/ComparisonSection'
 import { FAQSection } from '@/components/sections/FAQSection'
 
 export default function HomePage() {
@@ -13,7 +13,7 @@ export default function HomePage() {
       <HowItWorksSection />
       <FeaturesSection />
       <DemoSection />
-      <PricingSection />
+      <ComparisonSection />
       <FAQSection />
     </main>
   )

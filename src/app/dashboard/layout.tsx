@@ -10,7 +10,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const isLoginPage = pathname === '/dashboard/login'
+  const isLoginPage = pathname === '/login'
 
   return (
     <div className="min-h-screen bg-gray-50 flex">

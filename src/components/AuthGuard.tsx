@@ -1,3 +1,4 @@
+// apps/web/src/components/AuthGuard.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -15,7 +16,7 @@ export default function AuthGuard({ children }) {
         const { data: { session }, error } = await supabase.auth.getSession()
         
         if (error || !session) {
-          router.push('/admin/login')
+          router.push('/login')
           return
         }
 
@@ -34,7 +35,7 @@ export default function AuthGuard({ children }) {
         setIsAuthenticated(true)
       } catch (error) {
         console.error('Auth error:', error)
-        router.push('/admin/login')
+        router.push('/login')
       } finally {
         setIsLoading(false)
       }

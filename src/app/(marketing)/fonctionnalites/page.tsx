@@ -98,18 +98,39 @@ export default function FeaturesPage() {
                 </ul>
               </div>
               <div className="w-full lg:w-1/2">
-        <div className="relative">
-          <Image
-            src={`/images/features/${index === 0 ? 'chat-demo.png' : index === 1 ? 'payment-demo.png' : 'interface-demo.png'}`}
-            alt={feature.imageAlt}
-            width={800}
-            height={600}
-            quality={90}
-            priority={index === 0}
-            className="w-full h-auto"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-        />
-        </div>
+              <div className="relative">
+  <picture>
+    <source
+      srcSet={`/images/features/${
+        index === 0 
+          ? 'chat-demo-2x.png 2x, chat-demo-3x.png 3x' 
+          : index === 1 
+          ? 'payment-demo-2x.png 2x, payment-demo-3x.png 3x' 
+          : 'interface-demo-2x.png 2x, interface-demo-3x.png 3x'
+      }`}
+      type="image/png"
+      media="(min-width: 640px)"
+    />
+    <Image
+      src={`/images/features/${
+        index === 0 
+          ? 'chat-demo.png' 
+          : index === 1 
+          ? 'payment-demo.png' 
+          : 'interface-demo.png'
+      }`}
+      alt={feature.imageAlt}
+      width={800}
+      height={600}
+      quality={85}
+      priority={index === 0}
+      className="w-full h-auto"
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRseHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/2wBDARAVFhkYGR8ZGR8eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+    />
+  </picture>
+</div>
       </div>
     </div>
           ))}

@@ -12,12 +12,14 @@ import {
   LogOut,
   Menu,
   X,
+  MessageCircle,
 } from 'lucide-react'
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'Liste d\'attente', href: '/admin/waitlist', icon: Users },
-  { name: 'Paramètres', href: '/admin/settings', icon: Settings },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Liste d\'attente', href: '/waitlist', icon: Users },
+  { name: 'Messages', href: '/messages', icon: MessageCircle },
+  { name: 'Paramètres', href: '/settings', icon: Settings },
 ]
 
 export default function AdminNavbar() {
@@ -27,7 +29,7 @@ export default function AdminNavbar() {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut()
-      router.push('/admin/login')
+      router.push('/login')
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error)
     }
@@ -38,14 +40,11 @@ export default function AdminNavbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between">
           <div className="flex">
-            <div className="flex flex-shrink-0 items-center">
-              <Link 
-                href="/admin/dashboard"
-                className="text-xl font-bold text-dukka-primary"
-              >
-                Dukka Admin
-              </Link>
-            </div>
+          <div className="p-4">
+            <Link href="/">
+              <img src="/images/logo/logo_black.svg" alt="Dukka" className="h-9" />
+            </Link>
+          </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navigation.map((item) => {
                 const Icon = item.icon

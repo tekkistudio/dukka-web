@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation'
 const navigation = [
   { name: 'Accueil', href: '/' },
   { name: 'Fonctionnalités', href: '/fonctionnalites' },
-  { name: 'Tarifs', href: '/tarifs' },
+  { name: 'Pourquoi Dukka', href: '/pourquoi-dukka' },
   { name: 'À propos', href: '/a-propos' },
 ]
 
