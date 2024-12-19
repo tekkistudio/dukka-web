@@ -13,7 +13,7 @@ const footerLinks = {
   ],
   resources: [
     { name: 'Centre d\'aide', href: '#' },
-    { name: 'Blog', href: '/blog' },
+    { name: 'Blog', href: '#' },
     { name: 'Tutoriels', href: '#' },
     { name: 'API Documentation', href: '#' },
     { name: 'Statut système', href: '#' }
@@ -34,10 +34,10 @@ const footerLinks = {
 }
 
 const socialLinks = [
-  { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/dukka.africa' },
-  { name: 'Twitter', icon: Twitter, href: 'https://x.com/dukka.africa' },
-  { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/dukka.africa' },
-  { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/dukka.africa' }
+  { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/getdukka' },
+  { name: 'Twitter', icon: Twitter, href: 'https://x.com/getdukka' },
+  { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/getdukka' },
+  { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/getdukka' }
 ]
 
 function FooterColumn({ title, links }: { title: string, links: any[] }) {

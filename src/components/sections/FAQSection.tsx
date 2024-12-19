@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     question: "Y a-t-il des frais cachés ?",
-    answer: "Non, tous nos prix sont transparents. Vous ne payez que votre abonnement mensuel ou annuel. Aucun frais caché ni commission sur vos ventes. Les options supplémentaires (formation, domaine personnalisé) sont clairement indiquées."
+    answer: "Non, tous nos prix sont transparents. Vous ne payez que votre abonnement mensuel ou annuel. Aucun frais caché ni commission sur vos ventes."
   }
 ]
 

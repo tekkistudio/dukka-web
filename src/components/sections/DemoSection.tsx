@@ -607,80 +607,117 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
       case 'paymentMethod':
         await handlePaymentMethod(choice);
         break;
-      default:
-        // Gestion du scénario Viens on s'connaît
-        if (activeScenario.id === 'viens-on-sconnait') {
-          switch(choice) {
-            case "Je veux en savoir plus":
-              await addBotResponse(botResponses[activeScenario.id]['infos']);
-              break;
+        default:
+          // Gestion du scénario Viens on s'connaît
+          if (activeScenario.id === 'viens-on-sconnait') {
+            switch(choice) {
+              case "Je veux en savoir plus":
+                await addBotResponse(botResponses[activeScenario.id]['infos']);
+                break;
         
-            case "Ajouter le jeu pour les non mariés":
-            case "Ajouter le jeu Couples":
-              setOrderData(prev => ({
-                ...prev,
-                additionalProducts: [...prev.additionalProducts, "Jeu pour les Couples non mariés"],
-                orderDetails: `• Jeu pour les Mariés\n• Jeu pour les Couples non mariés (-10%)`
-              }));
-              await addBotResponse([{
-                type: 'assistant',
-                content: "Super ! Le jeu pour les Couples non mariés a bien été ajouté à votre commande avec une réduction de 10%. Vous profitez donc du Pack Duo ! Souhaitez-vous ajouter autre chose ?"
-              }, {
-                type: 'user-choices',
-                choices: [
-                  "Découvrir les autres jeux",
-                  "Finaliser la commande"
-                ]
-              }]);
-              break;
+              case "Je souhaite commander":
+                setCheckoutStep('quantity');
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: "C'est entendu ! Combien d'exemplaires souhaitez-vous commander ?"
+                }, {
+                  type: 'user-choices',
+                  choices: ["1 exemplaire", "2 exemplaires", "3 exemplaires", "Plus"]
+                }]);
+                break;
         
-            case "Finaliser la commande":
-              setCheckoutStep('contactInfo');
-              await addBotResponse(checkoutFlow.contactInfo);
-              break;
+              case "Ajouter le jeu pour les non mariés":
+              case "Ajouter le jeu Couples":
+                setOrderData(prev => ({
+                  ...prev,
+                  additionalProducts: [...prev.additionalProducts, "Jeu pour les Couples non mariés"],
+                  orderDetails: `• Jeu pour les Mariés\n• Jeu pour les Couples non mariés (-10%)`
+                }));
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: "Super ! Le jeu pour les Couples non mariés a bien été ajouté à votre commande avec une réduction de 10%. Vous profitez donc du Pack Duo ! Souhaitez-vous ajouter autre chose ?"
+                }, {
+                  type: 'user-choices',
+                  choices: [
+                    "Découvrir les autres jeux",
+                    "Finaliser la commande"
+                  ]
+                }]);
+                break;
         
-            case "Voir les autres jeux":
-            case "Découvrir les autres jeux":
-              await addBotResponse(otherProducts);
-              break;
+              case "Ajouter le jeu pour la Famille":
+                setOrderData(prev => ({
+                  ...prev,
+                  additionalProducts: [...prev.additionalProducts, "Jeu pour la Famille"],
+                  orderDetails: `${prev.orderDetails}\n• Jeu pour la Famille`
+                }));
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: "Super ! Le jeu pour la Famille a bien été ajouté à votre commande. Souhaitez-vous ajouter autre chose ?"
+                }, {
+                  type: 'user-choices',
+                  choices: [
+                    "Ajouter le jeu pour les Amis",
+                    "Finaliser la commande"
+                  ]
+                }]);
+                break;
         
-            case "Commander plusieurs jeux":
-              setCheckoutStep('quantity');
-              await addBotResponse([{
-                type: 'assistant',
-                content: "Excellent choix ! Combien d'exemplaires souhaitez-vous commander ?"
-              }, {
-                type: 'user-choices',
-                choices: ["2 exemplaires", "3 exemplaires", "4 exemplaires ou plus"]
-              }]);
-              break;
+              case "Ajouter le jeu pour les Amis":
+                setOrderData(prev => ({
+                  ...prev,
+                  additionalProducts: [...prev.additionalProducts, "Jeu pour les Amis"],
+                  orderDetails: `${prev.orderDetails}\n• Jeu pour les Amis`
+                }));
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: "Parfait ! Le jeu pour les Amis a bien été ajouté à votre commande. Que souhaitez-vous faire ?"
+                }, {
+                  type: 'user-choices',
+                  choices: [
+                    "Finaliser la commande",
+                    "Voir les autres jeux"
+                  ]
+                }]);
+                break;
         
-            case "Commander 1 jeu":
-              setOrderData(prev => ({
-                ...prev,
-                quantity: 1,
-                orderDetails: `• Jeu pour les Mariés (1 exemplaire)`
-              }));
-              setCheckoutStep('contactInfo');
-              await addBotResponse(checkoutFlow.contactInfo);
-              break;
+              case "Finaliser la commande":
+              case "Non merci, continuer ma commande":
+                setCheckoutStep('contactInfo');
+                await addBotResponse(checkoutFlow.contactInfo);
+                break;
         
-            case "Commander maintenant":
-              setCheckoutStep('quantity');
-              await addBotResponse([{
-                type: 'assistant',
-                content: "C'est entendu ! Combien d'exemplaires souhaitez-vous commander ?"
-              }, {
-                type: 'user-choices',
-                choices: ["1 exemplaire", "2 exemplaires", "3 exemplaires", "Plus"]
-              }]);
-              break;
+              case "Voir les autres jeux":
+              case "Découvrir les autres jeux":
+                await addBotResponse(otherProducts);
+                break;
         
-            case "Voir les packs":
-            case "Voir les packs disponibles":
-              await addBotResponse([{
-                type: 'assistant',
-                content: `Voici nos différents packs :
+              case "Commander plusieurs jeux":
+                setCheckoutStep('quantity');
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: "Excellent choix ! Combien d'exemplaires souhaitez-vous commander ?"
+                }, {
+                  type: 'user-choices',
+                  choices: ["2 exemplaires", "3 exemplaires", "4 exemplaires ou plus"]
+                }]);
+                break;
+        
+              case "Commander 1 jeu":
+                setOrderData(prev => ({
+                  ...prev,
+                  quantity: 1,
+                  orderDetails: `• Jeu pour les Mariés (1 exemplaire)`
+                }));
+                setCheckoutStep('contactInfo');
+                await addBotResponse(checkoutFlow.contactInfo);
+                break;
+        
+              case "Voir les packs":
+              case "Voir les packs disponibles":
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: `Voici nos différents packs :
         
         - Pack Solo : 14 000 FCFA
         - Pack Duo (-10%) : 25 200 FCFA
@@ -690,48 +727,108 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
         🎁 Bonus : -10% sur le jeu "Couples non mariés" en complément !
         
         La livraison est gratuite à Dakar. Dans les autres villes du Sénégal 🇸🇳 et à Abidjan 🇨🇮, elle est à 3000 FCFA.`
-              }, {
-                type: 'user-choices',
-                choices: [
-                  "Commander 1 jeu",
-                  "Commander plusieurs jeux",
-                  "Ajouter le jeu Couples"
-                ]
-              }]);
-              break;
+                }, {
+                  type: 'user-choices',
+                  choices: [
+                    "Commander 1 jeu",
+                    "Commander plusieurs jeux",
+                    "Ajouter le jeu Couples"
+                  ]
+                }]);
+                break;
         
-            case "Continuer avec ma commande":
-              setCheckoutStep('contactInfo');
-              await addBotResponse(checkoutFlow.contactInfo);
-              break;
-        
-            case "Combien coûte-t-il ?":
-              await addBotResponse(botResponses[activeScenario.id]['prix']);
-              break;
+              case "Combien coûte-t-il ?":
+                await addBotResponse(botResponses[activeScenario.id]['prix']);
+                break;
+            }
           }
-        }
         // Gestion du scénario Yamo'o
         else if (activeScenario.id === 'restaurant') {
           switch(choice) {
             case "Je veux en savoir plus":
               await addBotResponse(botResponses[activeScenario.id]['infos']);
               break;
+      
+            case "Commander avec boisson":
+              await addBotResponse([{
+                type: 'assistant',
+                content: `Excellent choix ! Quelle boisson souhaitez-vous ajouter à votre commande ?
+      
+      - Bissap frais (2 000 FCFA)
+      - Gingembre frais (2 000 FCFA)
+      - Cocktail detox (2 500 FCFA)`
+              }, {
+                type: 'user-choices',
+                choices: [
+                  "Ajouter Bissap",
+                  "Ajouter Gingembre",
+                  "Ajouter Cocktail detox",
+                  "Continuer sans boisson"
+                ]
+              }]);
+              break;
+      
+            case "Commander sans boisson":
+              setCheckoutStep('quantity');
+              await addBotResponse([{
+                type: 'assistant',
+                content: "D'accord ! Combien de box souhaitez-vous commander ?"
+              }, {
+                type: 'user-choices',
+                choices: ["1 box", "2 box (-10%)", "3 box (-15%)", "Plus"]
+              }]);
+              break;
+      
+            case "Ajouter Bissap":
+            case "Ajouter Gingembre":
+            case "Ajouter Cocktail detox":
+              const drinkName = choice.split('Ajouter ')[1];
+              setOrderData(prev => ({
+                ...prev,
+                drinks: [...prev.drinks, drinkName],
+                orderDetails: prev.orderDetails ? `${prev.orderDetails}\n• ${drinkName}` : `• ${drinkName}`
+              }));
+              await addBotResponse([{
+                type: 'assistant',
+                content: `Parfait ! J'ai ajouté ${drinkName} à votre commande. Souhaitez-vous ajouter une autre boisson ?`
+              }, {
+                type: 'user-choices',
+                choices: [
+                  "Ajouter Bissap",
+                  "Ajouter Gingembre",
+                  "Ajouter Cocktail detox",
+                  "Passer à la commande"
+                ]
+              }]);
+              break;
+      
+            case "Passer à la commande":
+            case "Continuer sans boisson":
+              setCheckoutStep('quantity');
+              await addBotResponse([{
+                type: 'assistant',
+                content: "Très bien ! Combien de box souhaitez-vous commander ?"
+              }, {
+                type: 'user-choices',
+                choices: ["1 box", "2 box (-10%)", "3 box (-15%)", "Plus"]
+              }]);
+              break;
+      
             case "Je souhaite commander":
+            case "Commander maintenant":
               setCheckoutStep('quantity');
               await addBotResponse(restaurantFlow.quantity);
               break;
-            case "Combien coûte-t-elle ?":
-              await addBotResponse(botResponses[activeScenario.id]['prix']);
-              break;
+      
             case "Voir les boissons":
             case "Voir les accompagnements":
               await addBotResponse([{
                 type: 'assistant',
                 content: `Voici notre sélection de boissons fraîches maison 🥤
-
-• Bissap frais (2 000 FCFA)
-• Gingembre frais (2 000 FCFA)
-• Cocktail detox (2 500 FCFA)`
+      
+      - Bissap frais (2 000 FCFA)
+      - Gingembre frais (2 000 FCFA)
+      - Cocktail detox (2 500 FCFA)`
               }, {
                 type: 'user-choices',
                 choices: [
@@ -741,11 +838,10 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
                 ]
               }]);
               break;
-            case "Commander avec boisson":
-            case "Commander sans boisson":
-            case "Commander maintenant":
-              setCheckoutStep('quantity');
-              await addBotResponse(restaurantFlow.quantity);
+      
+            case "Combien coûte-t-elle ?":
+            case "Voir les prix":
+              await addBotResponse(botResponses[activeScenario.id]['prix']);
               break;
           }
         }

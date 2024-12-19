@@ -85,7 +85,7 @@ export function HeroSection() {
           >
             <div className="relative w-full h-[540px] sm:w-[360px] sm:h-[540px] lg:w-[480px] lg:h-[720px]">
               <Image
-                src="/images/hero/mockup-dukka.png"
+                src="/images/hero/mockup-dukka.webp"
                 alt="Interface Dukka"
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 360px, 480px"
