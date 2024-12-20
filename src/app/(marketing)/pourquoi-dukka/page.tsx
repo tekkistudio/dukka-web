@@ -174,7 +174,7 @@ export default function WhyDukkaPage() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <GradientTitle subtitle="Choisir Dukka, c'est choisir de vendre comme l'Afrique aime acheter">
+            <GradientTitle subtitle="Choisir Dukka, c'est choisir de vendre comme les Africains aiment acheter">
               Pourquoi choisir Dukka ?
             </GradientTitle>
           </motion.div>
@@ -189,7 +189,7 @@ export default function WhyDukkaPage() {
               L'e-commerce en Afrique mérite mieux que des solutions occidentales inadaptées
             </h2>
             <p className="text-gray-600 text-lg">
-              Découvrez comment Dukka répond aux véritables défis des commerçants africains
+              Découvrez comment Dukka répond aux véritables défis des e-commerçants africains
             </p>
           </div>
 
@@ -227,7 +227,7 @@ export default function WhyDukkaPage() {
               Une comparaison détaillée
             </h2>
             <p className="text-gray-600 text-lg">
-              Découvrez pourquoi Dukka est la meilleure alternative à Shopify en Afrique
+              Si vous vendez en Afrique, Dukka est votre meilleur choix.
             </p>
           </div>
 

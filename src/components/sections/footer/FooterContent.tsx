@@ -6,7 +6,7 @@ import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
 const footerLinks = {
   product: [
     { name: 'Fonctionnalités', href: '/fonctionnalites' },
-    { name: 'Tarifs', href: '/tarifs' },
+    { name: 'Tarifs', href: '#' },
     { name: 'Témoignages', href: '#' },
     { name: 'Guide d\'utilisation', href: '#' },
     { name: 'Mises à jour', href: '#' }
@@ -114,7 +114,7 @@ export function FooterContent() {
             © {new Date().getFullYear()} Dukka. Tous droits réservés.
           </p>
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
-            {['wave_1', 'om_1', 'cb_1'].map((payment) => (
+            {['wave_1', 'om_1', 'mtn_1', 'airtel_1', 'moov_1', 'cb_1'].map((payment) => (
               <div key={payment} className="hover:-translate-y-0.5 transition-transform duration-200">
                 <Image
                   src={`/images/payments/${payment}.svg`}
