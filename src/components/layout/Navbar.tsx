@@ -54,7 +54,7 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
       />
 
       <nav className="container mx-auto py-4 relative">
-        <div className="flex items-center justify-between px-4 lg:px-8">
+        <div className="flex items-center justify-between px-4 xl:px-8">
           {/* Logo */}
           <div className="flex flex-1">
             <a href="/" className="-m-1.5 p-1.5">
@@ -63,14 +63,14 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
                 alt="Dukka"
                 width={160}
                 height={64}
-                className="h-10 w-auto sm:h-12 lg:h-14"
+                className="h-10 w-auto sm:h-12 xl:h-14"
                 priority
               />
             </a>
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden lg:flex lg:gap-x-12">
+          <div className="hidden xl:flex xl:gap-x-12">
             {navigation.map((item) => (
               <a
                 key={item.name}
@@ -87,12 +87,12 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <div className="hidden xl:flex xl:flex-1 xl:justify-end">
             <WaitlistButton />
           </div>
 
           {/* Menu mobile button */}
-          <div className="flex lg:hidden">
+          <div className="flex xl:hidden">
             <button
               type="button"
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-900"

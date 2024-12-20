@@ -1,7 +1,9 @@
-// FeaturesPage component
+'use client'
+
 import Image from 'next/image'
 import { GradientTitle } from '@/components/GradientTitle'
 import { MessageSquare, CreditCard, BarChart3, Globe, ShieldCheck, Smartphone, Headphones } from 'lucide-react'
+import { useWaitlist } from '@/contexts/WaitlistContext'
 
 const mainFeatures = [
   {
@@ -63,6 +65,8 @@ const additionalFeatures = [
 ]
 
 export default function FeaturesPage() {
+  const { openWaitlist } = useWaitlist()
+
   return (
     <main className="bg-white">
       {/* Hero Section */}
@@ -98,41 +102,41 @@ export default function FeaturesPage() {
                 </ul>
               </div>
               <div className="w-full lg:w-1/2">
-              <div className="relative">
-  <picture>
-    <source
-      srcSet={`/images/features/${
-        index === 0 
-          ? 'chat-demo-2x.png 2x, chat-demo-3x.png 3x' 
-          : index === 1 
-          ? 'payment-demo-2x.png 2x, payment-demo-3x.png 3x' 
-          : 'interface-demo-2x.png 2x, interface-demo-3x.png 3x'
-      }`}
-      type="image/png"
-      media="(min-width: 640px)"
-    />
-    <Image
-      src={`/images/features/${
-        index === 0 
-          ? 'chat-demo.png' 
-          : index === 1 
-          ? 'payment-demo.png' 
-          : 'interface-demo.png'
-      }`}
-      alt={feature.imageAlt}
-      width={800}
-      height={600}
-      quality={85}
-      priority={index === 0}
-      className="w-full h-auto"
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-      placeholder="blur"
-      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRseHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/2wBDARAVFhkYGR8ZGR8eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-    />
-  </picture>
-</div>
-      </div>
-    </div>
+                <div className="relative">
+                  <picture>
+                    <source
+                      srcSet={`/images/features/${
+                        index === 0 
+                          ? 'chat-demo-2x.png 2x, chat-demo-3x.png 3x' 
+                          : index === 1 
+                          ? 'payment-demo-2x.png 2x, payment-demo-3x.png 3x' 
+                          : 'interface-demo-2x.png 2x, interface-demo-3x.png 3x'
+                      }`}
+                      type="image/png"
+                      media="(min-width: 640px)"
+                    />
+                    <Image
+                      src={`/images/features/${
+                        index === 0 
+                          ? 'chat-demo.png' 
+                          : index === 1 
+                          ? 'payment-demo.png' 
+                          : 'interface-demo.png'
+                      }`}
+                      alt={feature.imageAlt}
+                      width={800}
+                      height={600}
+                      quality={85}
+                      priority={index === 0}
+                      className="w-full h-auto"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRseHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/2wBDARAVFhkYGR8ZGR8eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                    />
+                  </picture>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </section>
@@ -172,12 +176,12 @@ export default function FeaturesPage() {
           <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
             Rejoignez les marques et commerçants qui boostent leurs ventes avec Dukka. 
           </p>
-          <a
-            href="#"
+          <button
+            onClick={openWaitlist}
             className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-dukka-primary text-white font-semibold hover:bg-dukka-dark transition-colors duration-200"
           >
             Rejoindre la liste d'attente
-          </a>
+          </button>
         </div>
       </section>
     </main>

@@ -323,13 +323,15 @@ export function DemoSection() {
     }]);
   };
 
-  const handleShopModeFlow = async (choice: string) => {
-    if (!choice) return;
+  // Modification du handleShopModeFlow
+const handleShopModeFlow = async (choice: string) => {
+  if (!choice) return;
 
-    if (choice === "Voir les ensembles") {
-      await addBotResponse([{
-        type: 'assistant',
-        content: `Voici nos ensembles coordonnés :
+  // Gestion du choix des ensembles
+  if (choice === "Voir les ensembles") {
+    await addBotResponse([{
+      type: 'assistant',
+      content: `Voici nos ensembles coordonnés :
 
 🌟 Ensemble Complet :
 • Robe + Sac + Écharpe = 68 000 FCFA (au lieu de 75 000 FCFA)
@@ -350,45 +352,70 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
           "Commander la robe seule"
         ]
       }]);
-      return;
-    }
+    return;
+  }
 
-    if (choice.includes("Choisir Ensemble")) {
-      setCheckoutStep('size');
-      await addBotResponse(shopModeFlow.size);
-      return;
-    }
+  // Gestion du choix d'un ensemble spécifique
+  if (choice.includes("Choisir Ensemble")) {
+    const ensembleType = choice.split("Choisir ")[1];
+    const accessories = {
+      "Ensemble Complet": ["Sac", "Écharpe"],
+      "Ensemble Essentiel": ["Sac"],
+      "Duo Élégant": ["Écharpe"]
+    };
+
+    setOrderData(prev => ({
+      ...prev,
+      accessories: accessories[ensembleType] || [],
+      orderDetails: `• ${ensembleType}`,
+      quantity: 1
+    }));
+
+    setCheckoutStep('size');
+    await addBotResponse(shopModeFlow.size);
+    return;
+  }
+
+  // Gestion des étapes suivantes du flow
+  if (checkoutStep === 'size') {
+    setOrderData(prev => ({
+      ...prev,
+      size: choice,
+      orderDetails: prev.accessories.length > 0 ?
+        `• ${prev.orderDetails} (Taille ${choice})` :
+        `• Robe Bogolan (Taille ${choice})`
+    }));
     
-    if (checkoutStep === 'size') {
-      setOrderData(prev => ({ 
-        ...prev, 
-        size: choice,
-        quantity: orderData.quantity || 1,  
-        orderDetails: `• Robe Bogolan (${orderData.quantity || 1} exemplaire${orderData.quantity > 1 ? 's' : ''}, Taille ${choice})`
-      }));
+    // Si pas d'ensemble choisi, proposer les accessoires
+    if (!orderData.accessories.length) {
       setCheckoutStep('accessories');
       await addBotResponse(shopModeFlow.accessories);
-    } else if (checkoutStep === 'accessories') {
-      if (!choice.includes('Continuer')) {
-        const accessory = choice.split('Ajouter ')[1];
-        setOrderData(prev => ({
-          ...prev,
-          accessories: [...prev.accessories, accessory],
-          orderDetails: prev.orderDetails + `\n• ${accessory}`
-        }));
-        await addBotResponse([
-          {
-            type: 'assistant',
-            content: `J'ai bien ajouté ${accessory} à votre commande 👜 Souhaitez-vous ajouter un autre accessoire ?`
-          },
-          ...shopModeFlow.accessories
-        ]);
-      } else {
-        setCheckoutStep('contactInfo');
-        await addBotResponse(checkoutFlow.contactInfo);
-      }
+    } else {
+      // Si ensemble déjà choisi, passer directement aux infos de contact
+      setCheckoutStep('contactInfo');
+      await addBotResponse(checkoutFlow.contactInfo);
     }
-  };
+  } else if (checkoutStep === 'accessories') {
+    if (!choice.includes('Continuer')) {
+      const accessory = choice.split('Ajouter ')[1];
+      setOrderData(prev => ({
+        ...prev,
+        accessories: [...prev.accessories, accessory],
+        orderDetails: prev.orderDetails + `\n• ${accessory}`
+      }));
+      await addBotResponse([
+        {
+          type: 'assistant',
+          content: `J'ai bien ajouté ${accessory} à votre commande 👜 Souhaitez-vous ajouter un autre accessoire ?`
+        },
+        ...shopModeFlow.accessories
+      ]);
+    } else {
+      setCheckoutStep('contactInfo');
+      await addBotResponse(checkoutFlow.contactInfo);
+    }
+  }
+};
 
   const handleRestaurantFlow = async (choice: string) => {
     if (!choice) return;
