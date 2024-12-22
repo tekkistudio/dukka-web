@@ -873,38 +873,42 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
           }
         }
         // Gestion du scénario Othentic
-        else {
-          if (choice.includes("Choisir Ensemble")) {
-            setOrderData(prev => ({
+          else {
+            if (choice.includes("Choisir Ensemble") || choice === "Choisir Duo Élégant") {
+              setOrderData(prev => ({
               ...prev,
               accessories: choice === "Choisir Ensemble Complet" 
                 ? ["Sac", "Écharpe"]
                 : choice === "Choisir Ensemble Essentiel"
-                  ? ["Sac"]
-                  : ["Écharpe"],
-              orderDetails: `• Ensemble ${choice.split("Choisir ")[1]}`
-            }));
-            setCheckoutStep('size');
-            await addBotResponse(shopModeFlow.size);
-          }
+                ? ["Sac"]
+                : choice === "Choisir Duo Élégant"
+                ? ["Écharpe"]
+                : ["Écharpe"], // cas par défaut
+              orderDetails: choice === "Choisir Duo Élégant"
+                ? "• Duo Élégant (Robe + Écharpe)"
+                : `• Ensemble ${choice.split("Choisir ")[1]}`
+              }));
+               setCheckoutStep('size');
+                await addBotResponse(shopModeFlow.size);
+              }
           else if (choice === "Commander la robe seule") {
-            setCheckoutStep('size');
-            await addBotResponse(shopModeFlow.size);
-          }
+              setCheckoutStep('size');
+          await addBotResponse(shopModeFlow.size);
+              }
           else if (choice === "Je veux en savoir plus") {
-            await addBotResponse(botResponses[activeScenario.id]['infos']);
-          }
+          await addBotResponse(botResponses[activeScenario.id]['infos']);
+              }
           else if (choice.includes("Combien coûte") || choice === "Voir les prix") {
-            await addBotResponse(botResponses[activeScenario.id]['prix']);
-          }
+          await addBotResponse(botResponses[activeScenario.id]['prix']);
+              }
           else if (choice === "Voir les ensembles" || choice === "Choisir un ensemble") {
-            await handleShopModeFlow("Voir les ensembles");
-          }
+          await handleShopModeFlow("Voir les ensembles");
+              }
           else if (choice.toLowerCase().includes("commander") || choice === "Je souhaite commander") {
-            await handleStartOrder();
-          }
+          await handleStartOrder();
+              }
         }
-        break;
+      break;
     }
   };
 

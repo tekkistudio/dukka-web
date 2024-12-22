@@ -24,7 +24,7 @@ export default function TermsPage() {
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">1. Objet</h2>
             <p className="mb-4">
-              Les présentes Conditions Générales d'Utilisation (CGU) définissent les modalités d'utilisation de la plateforme Dukka, accessible à l'adresse [votre-url], et les services associés.
+              Les présentes Conditions Générales d'Utilisation (CGU) définissent les modalités d'utilisation de la plateforme Dukka, accessible à l'adresse https://getdukka.com, et les services associés.
             </p>
             <p className="mb-4">
               L'utilisation de la plateforme implique l'acceptation pleine et entière des présentes CGU. Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser la plateforme.
