@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: 'Dukka réinvente l\'e-commerce pour l\'adapter à la réalité africaine.',
     images: [
       {
-        url: '/images/og-image.jpg', // Assurez-vous d'avoir cette image
+        url: '/images/og-image.png', 
         width: 1200,
         height: 630,
         alt: 'Dukka Preview'
