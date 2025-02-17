@@ -1,3 +1,4 @@
+// src/components/waitlist/WaitlistChat.tsx
 'use client'
 
 import React from 'react'
@@ -7,6 +8,101 @@ import { supabase } from '@/lib/supabaseClient'
 import { waitlistChat } from './waitlistChatData'
 import { LoadingDots } from './LoadingDots'
 import type { Message, UserData, WaitlistChatProps } from '@/types/waitlist'
+
+const validatePhoneNumber = (phone: string): { isValid: boolean; message: string } => {
+  // Supprimer tous les caractères non numériques sauf + au début
+  const cleanPhone = phone.replace(/[^\d+]/g, '')
+  
+  // Vérifier que le numéro commence par +
+  if (!cleanPhone.startsWith('+')) {
+    return {
+      isValid: false,
+      message: "Le numéro doit commencer par + suivi de l'indicatif pays (exemple: +221 pour le Sénégal)"
+    }
+  }
+
+  // Vérifier la longueur minimale (8 chiffres + indicatif) et maximale (15 chiffres au total)
+  if (cleanPhone.length < 9 || cleanPhone.length > 15) {
+    return {
+      isValid: false,
+      message: "Le numéro doit contenir entre 8 et 15 chiffres (incluant l'indicatif pays)"
+    }
+  }
+
+  // Liste des indicatifs pays valides pour l'Afrique
+  const validPrefixes = [
+    '+212', // Maroc
+    '+213', // Algérie
+    '+216', // Tunisie
+    '+220', // Gambie
+    '+221', // Sénégal
+    '+222', // Mauritanie
+    '+223', // Mali
+    '+224', // Guinée
+    '+225', // Côte d'Ivoire
+    '+226', // Burkina Faso
+    '+227', // Niger
+    '+228', // Togo
+    '+229', // Bénin
+    '+230', // Maurice
+    '+231', // Libéria
+    '+232', // Sierra Leone
+    '+233', // Ghana
+    '+234', // Nigeria
+    '+235', // Tchad
+    '+236', // République centrafricaine 
+    '+237', // Cameroun
+    '+238', // Cap-Vert
+    '+239', // São Tomé-et-Príncipe
+    '+240', // Guinée équatoriale
+    '+241', // Gabon
+    '+242', // République du Congo
+    '+243', // République démocratique du Congo
+    '+244', // Angola
+    '+245', // Guinée-Bissau
+    '+246', // Diego Garcia
+    '+248', // Seychelles
+    '+249', // Soudan
+    '+250', // Rwanda
+    '+251', // Éthiopie
+    '+252', // Somalie
+    '+253', // Djibouti
+    '+254', // Kenya
+    '+255', // Tanzanie
+    '+256', // Ouganda
+    '+257', // Burundi
+    '+258', // Mozambique
+    '+260', // Zambie
+    '+261', // Madagascar
+    '+262', // Réunion
+    '+263', // Zimbabwe
+    '+264', // Namibie
+    '+265', // Malawi
+    '+266', // Lesotho
+    '+267', // Botswana
+    '+268', // Eswatini
+    '+269', // Comores
+    '+27',  // Afrique du Sud
+    '+290', // Sainte-Hélène
+    '+291', // Érythrée
+    '+297', // Aruba
+    '+298', // Îles Féroé
+    '+299'  // Groenland
+  ]
+
+  // Vérifier que le numéro commence par un indicatif valide
+  if (!validPrefixes.some(prefix => cleanPhone.startsWith(prefix))) {
+    return {
+      isValid: false,
+      message: "L'indicatif pays n'est pas valide pour l'Afrique. Exemple: +221 pour le Sénégal"
+    }
+  }
+
+  return {
+    isValid: true,
+    message: ""
+  }
+}
 
 export default function WaitlistChat({ onClose }: WaitlistChatProps) {
   const [messages, setMessages] = React.useState<Message[]>([
@@ -142,32 +238,44 @@ export default function WaitlistChat({ onClose }: WaitlistChatProps) {
       
       switch (question.id) {
         case 'full_name':
-          setUserData(prev => ({ ...prev, full_name: trimmedText }))
-          break
-        case 'email':
-          if (!trimmedText.includes('@')) {
+          if (trimmedText.length < 3) {
             await addMessage({
               type: 'assistant',
-              content: "Cette adresse email ne semble pas valide. Pouvez-vous la vérifier ?"
+              content: "Votre nom semble trop court. Veuillez entrer votre nom complet."
+            })
+            return
+          }
+          setUserData(prev => ({ ...prev, full_name: trimmedText }))
+          break
+          
+        case 'email':
+          if (!trimmedText.includes('@') || !trimmedText.includes('.')) {
+            await addMessage({
+              type: 'assistant',
+              content: "Cette adresse email ne semble pas valide. Veuillez vérifier le format."
             })
             return
           }
           setUserData(prev => ({ ...prev, email: trimmedText }))
           break
+          
         case 'phone':
-          const phoneNumber = trimmedText.replace(/\s+/g, '')
-          if (phoneNumber.length < 8) {
+          const phoneValidation = validatePhoneNumber(trimmedText)
+          if (!phoneValidation.isValid) {
             await addMessage({
               type: 'assistant',
-              content: "Ce numéro semble trop court. Assurez-vous d'inclure l'indicatif du pays."
+              content: phoneValidation.message
             })
             return
           }
-          setUserData(prev => ({ ...prev, phone: phoneNumber }))
+          setUserData(prev => ({ ...prev, phone: trimmedText }))
+          break
+          
+        case 'business_type':
+          setUserData(prev => ({ ...prev, business_type: trimmedText }))
           break
       }
 
-      // Attendre que le state soit mis à jour
       await new Promise(resolve => setTimeout(resolve, 100))
       await handleNextStep()
     } catch (error) {
@@ -271,51 +379,53 @@ export default function WaitlistChat({ onClose }: WaitlistChatProps) {
           ref={chatRef}
           className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F0F2F5]"
         >
-          {messages.map((message, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
-              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {message.type === 'user-choices' ? (
-                <div className="flex flex-wrap gap-2 w-full" role="group">
-                  {Array.isArray(message.content) && message.content.map((choice) => (
-                    <motion.button
-                      key={choice}
-                      onClick={() => handleUserChoice(choice)}
-                      className="bg-white hover:bg-gray-50 text-dukka-primary px-4 py-2.5 rounded-full transition-colors text-sm border border-gray-200"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {choice}
-                    </motion.button>
-                  ))}
-                </div>
-              ) : (
-                <div 
-                  className={`max-w-[85%] rounded-2xl p-3 ${
-                    message.type === 'user' 
-                      ? 'bg-dukka-primary text-white ml-auto'
-                      : 'bg-white'
-                  }`}
-                >
-                  {message.type === 'assistant' && (
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-sm text-gray-800">Dukka</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Assistant</span>
-                    </div>
-                  )}
-                  {typeof message.content === 'string' && message.content.split('\n').map((line, i) => (
-                    <p key={i} className={`${i > 0 ? 'mt-2' : ''} ${line.startsWith('•') ? 'pl-4' : ''}`}>
-                      {line}
-                    </p>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          ))}
+          <AnimatePresence>
+            {messages.map((message, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {message.type === 'user-choices' ? (
+                  <div className="flex flex-wrap gap-2 w-full" role="group">
+                    {Array.isArray(message.content) && message.content.map((choice) => (
+                      <motion.button
+                        key={choice}
+                        onClick={() => handleUserChoice(choice)}
+                        className="bg-white hover:bg-gray-50 text-dukka-primary px-4 py-2.5 rounded-full transition-colors text-sm border border-gray-200"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {choice}
+                      </motion.button>
+                    ))}
+                  </div>
+                ) : (
+                  <div 
+                    className={`max-w-[85%] rounded-2xl p-3 ${
+                      message.type === 'user' 
+                        ? 'bg-dukka-primary text-white ml-auto'
+                        : 'bg-white'
+                    }`}
+                  >
+                    {message.type === 'assistant' && (
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-sm text-gray-800">Dukka</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Assistant</span>
+                      </div>
+                    )}
+                    {typeof message.content === 'string' && message.content.split('\n').map((line, i) => (
+                      <p key={i} className={`${i > 0 ? 'mt-2' : ''} ${line.startsWith('•') ? 'pl-4' : ''}`}>
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {isTyping && <LoadingDots />}
         </div>
