@@ -1,3 +1,4 @@
+// next.config.ts
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',  // Optimisé pour les déploiements Vercel
@@ -12,10 +13,6 @@ const nextConfig = {
   images: {
     unoptimized: true,  // Nécessaire pour les exports statiques
   },
-  experimental: {
-    // Améliore la compatibilité avec le rendu hybride
-    serverActions: true
-  }
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
