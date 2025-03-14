@@ -8,7 +8,7 @@ export async function GET() {
   const aiAvailable = process.env.OPENAI_API_KEY || process.env.CLAUDE_API_KEY 
     ? true 
     : false;
-  
+
   // Renvoyer le statut
   return NextResponse.json({ 
     available: aiAvailable,

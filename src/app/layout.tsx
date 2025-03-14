@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ClientProvider } from '@/components/providers/ClientProvider'
@@ -9,11 +9,10 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: 'Dukka - La Meilleure Alternative à Shopify en Afrique',
+    default: 'Dukka - La Meilleure Alternative à Shopify et Woocommerce en Afrique',
     template: '%s | Dukka'
   },
   description: 'Dukka réinvente l\'e-commerce pour l\'adapter à la réalité africaine, en permettant aux commerçants et marques de créer des boutiques en ligne où la conversation est au cœur de l\'expérience d\'achat.',
-  viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: '/images/logo/fav.png',
   },
@@ -22,8 +21,8 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     url: 'https://getdukka.com',
     siteName: 'Dukka',
-    title: 'Dukka - La Meilleure Alternative à Shopify en Afrique',
-    description: 'Dukka réinvente l\'e-commerce pour l\'adapter à la réalité africaine.',
+    title: 'Dukka - La Meilleure Alternative à Shopify et Woocommerce en Afrique',
+    description: 'Dukka réinvente l\'e-commerce pour l\'adapter aux habitudes d\'achat des consommateurs en Afrique.',
     images: [
       {
         url: '/images/og-image.png', 
@@ -33,6 +32,12 @@ export const metadata: Metadata = {
       }
     ]
   }
+}
+
+// Déplacer les métadonnées du viewport ici conformément à l'avis de Next.js
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1
 }
 
 export default function RootLayout({

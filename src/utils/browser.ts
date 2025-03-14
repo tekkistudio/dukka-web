@@ -3,7 +3,7 @@
 /**
  * Vérifie si le code s'exécute dans un environnement navigateur
  */
-export const isBrowser = () => {
+export const isBrowser = (): boolean => {
     return typeof window !== 'undefined';
   };
   

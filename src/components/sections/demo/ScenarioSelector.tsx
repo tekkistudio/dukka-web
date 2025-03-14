@@ -38,3 +38,5 @@ export function ScenarioSelector({ scenarios, activeScenario, onSelect }: Scenar
     </div>
   )
 }
+
+export default ScenarioSelector

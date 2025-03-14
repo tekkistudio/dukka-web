@@ -1,6 +1,7 @@
 // src/components/sections/demo/ChatInterface.tsx
+'use client';
+
 import { useEffect, useState } from 'react';
-import { isBrowser } from '@/utils/browser';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Send, Mic } from 'lucide-react';
@@ -14,17 +15,18 @@ import {
   getSuggestedResponses,
   type ChatMessage as AiChatMessage 
 } from '@/services/aiService';
+import { isBrowser } from '@/utils/browser';
 
 interface ChatInterfaceProps {
   messages: any[];
   isTyping: boolean;
   showCheckout: boolean;
   onUserChoice: (choice: string, isTextInput?: boolean) => void;
-  onAiResponse: (response: string) => void; // Nouveau callback pour les réponses IA
+  onAiResponse: (response: string) => void;
   chatRef: React.RefObject<HTMLDivElement>;
   scenario: Scenario;
   totalAmount: number;
-  inCheckoutFlow: boolean; // Nouveau prop pour savoir si on est dans le flow d'achat
+  inCheckoutFlow: boolean;
 }
 
 export function ChatInterface({ 
@@ -41,7 +43,7 @@ export function ChatInterface({
   const [inputMessage, setInputMessage] = useState("");
   const [mounted, setMounted] = useState(false);
   const [userTyping, setUserTyping] = useState(false);
-  const [lastActivity, setLastActivity] = useState(Date.now());
+  const [lastActivity, setLastActivity] = useState(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isProcessingAi, setIsProcessingAi] = useState(false);
   const [aiEnabled, setAiEnabled] = useState(false);
@@ -49,8 +51,7 @@ export function ChatInterface({
   // Détecter si l'IA est activée en vérifiant si les clés API sont présentes
   useEffect(() => {
     const checkAiAvailability = async () => {
-      // Ne pas exécuter côté serveur
-      if (!isBrowser()) return;
+      if (!mounted) return;
       
       try {
         const response = await fetch('/api/ai/status');
@@ -64,14 +65,18 @@ export function ChatInterface({
       }
     };
     
-    checkAiAvailability();
-  }, []);
+    if (mounted) {
+      checkAiAvailability();
+    }
+  }, [mounted]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+
     if (inputMessage && !userTyping) {
       setUserTyping(true);
     } else if (!inputMessage && userTyping) {
@@ -86,7 +91,7 @@ export function ChatInterface({
     } else {
       setSuggestions([]);
     }
-  }, [inputMessage, userTyping, scenario.id]);
+  }, [inputMessage, userTyping, scenario.id, mounted]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isProcessingAi) return;
@@ -106,8 +111,6 @@ export function ChatInterface({
     if (aiEnabled && !inCheckoutFlow) {
       await requestAiResponse(messageToSend);
     }
-    // Note: Pendant le flow d'achat, le composant parent (DemoSection) 
-    // s'occupera de traiter l'entrée via handleTextInput
   };
 
   // Fonction pour obtenir une réponse de l'IA
