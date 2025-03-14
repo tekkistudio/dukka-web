@@ -1,4 +1,4 @@
-// apps/web/src/components/sections/demo/messages/ChatMessage.tsx
+// src/components/sections/demo/messages/ChatMessage.tsx
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -75,13 +75,20 @@ const ChatMessage = ({
     );
   };
 
+  // Nouveau renderContent qui prend en charge le HTML
   const renderContent = (content: string) => {
+    // Split le contenu en paragraphes
+    const paragraphs = content.split('\n');
+    
     return (
       <div className={`${isBot ? 'text-gray-800' : 'text-white'}`}>
-        {content.split('\n').map((line, i) => (
-          <p key={i} className={`${i > 0 ? 'mt-2' : ''}`}>
-            {line}
-          </p>
+        {paragraphs.map((paragraph, i) => (
+          <div 
+            key={i} 
+            className={`${i > 0 ? 'mt-2' : ''}`}
+            // Utilisation de dangerouslySetInnerHTML pour interpréter le HTML
+            dangerouslySetInnerHTML={{ __html: paragraph }}
+          />
         ))}
       </div>
     );

@@ -1,3 +1,4 @@
+// src/components/sections/demo/data.ts
 export interface Media {
   type: 'image' | 'video';
   url: string;
@@ -19,6 +20,47 @@ export interface Scenario {
   };
 }
 
+// Interface pour les paramètres des fonctions avec des callbacks
+interface FirstNameParam {
+  firstName: string;
+}
+
+interface CityParam {
+  city: string;
+}
+
+interface BoxQuantityParam {
+  boxQuantity: number;
+}
+
+interface PreviousOrdersParam {
+  previousOrders?: boolean;
+}
+
+interface OrderSummaryParam {
+  orderData: {
+    quantity: number;
+    additionalProducts: string[];
+    size: string;
+    accessories: string[];
+    deliveryTime: string;
+    drinks: string[];
+    contactInfo: string;
+    firstName: string;
+    lastName: string;
+    city: string;
+    address: string;
+    phone: string;
+    paymentMethod: string;
+    orderDetails: string;
+  };
+  totalAmount: number;
+}
+
+interface PaymentMethodParam extends OrderSummaryParam {
+  activeScenario: Scenario;
+}
+
 export const scenarios: Scenario[] = [
   {
     id: 'viens-on-sconnait',
@@ -34,29 +76,29 @@ export const scenarios: Scenario[] = [
     }
   },
   {
-    id: 'shop-mode',
-    title: "Othentic",
-    subtitle: "Vêtements traditionnels",
-    context: "Mode traditionnelle",
-    chatbotName: "Fatim",
+    id: 'amani',
+    title: "Amani",
+    subtitle: "Bien-être féminin",
+    context: "Santé & bien-être",
+    chatbotName: "Aïcha",
     genre: "feminin",
     product: {
-      name: "Robe Bogolan",
-      price: 35000,
-      description: "Robe moderne en tissu Bogolan"
+      name: "Ceinture chauffante Mia",
+      price: 29900,
+      description: "Soulage les douleurs menstruelles de manière naturelle"
     }
   },
   {
-    id: 'restaurant',
-    title: "Yamo'o",
-    subtitle: "Restaurant à domicile",
-    context: "Restauration",
-    chatbotName: "Rosy",
+    id: 'ecoboom',
+    title: "Ecoboom",
+    subtitle: "Couches écologiques",
+    context: "Produits pour bébé",
+    chatbotName: "Awa",
     genre: "feminin",
     product: {
-      name: "Box de snacks",
-      price: 13000,
-      description: "Notre box signature (bestseller)"
+      name: "Couches biodégradables",
+      price: 4800,
+      description: "Couches écologiques en fibres de bambou"
     }
   }
 ];
@@ -65,7 +107,7 @@ export function buildConversation(scenario: Scenario) {
   return [
     {
       type: 'assistant',
-      content: `Bonjour 👋 Je suis ${scenario.chatbotName}. Je suis là pour répondre à vos questions et vous guider dans votre achat. Je vois que notre ${scenario.product.name} vous intéresse. C'est un excellent choix ! Comment puis-je vous aider ?`
+      content: `Bonjour 👋 Je suis ${scenario.chatbotName}, votre Assistante d'achat. Je vois que vous vous intéressez à notre ${scenario.product.name}. C'est un excellent choix ! Comment puis-je vous aider ?`
     },
     {
       type: 'user-choices',
@@ -83,12 +125,7 @@ export const botResponses = {
     'infos': [
       {
         type: 'assistant',
-        content: `Le jeu VIENS ON S'CONNAÎT - Entre Mariés a été spécialement conçu pour les couples mariés qui souhaitent renforcer leur lien conjugal et raviver la passion dans leur relation. Il offre une opportunité unique d'explorer les aspects les plus intimes et significatifs de votre vie à deux, tout en créant des moments de connexion authentique et de croissance mutuelle. Le jeu contient 150 cartes réparties en 3 catégories :
-💝 Connexion Émotionnelle 
-💫 Projets & Rêves 
-💑 Intimité & Complicité 
-
-Chaque carte pose une question ou propose une activité pour renforcer votre lien conjugal.`,
+        content: `Le jeu VIENS ON S'CONNAÎT - Entre Mariés est conçu pour les couples mariés qui souhaitent renforcer leur lien conjugal et raviver la passion dans leur relation. Il offre une opportunité unique d'explorer les aspects les plus intimes et significatifs de votre vie à deux, tout en créant des moments de connexion authentique et de croissance mutuelle.`,
         media: [{
           type: 'image',
           url: '/images/products/maries-1.jpg',
@@ -104,7 +141,7 @@ Chaque carte pose une question ou propose une activité pour renforcer votre lie
         type: 'user-choices',
         choices: [
           "Voir les packs disponibles",
-          "Commander maintenant",
+          "Je souhaite commander",
           "Découvrir les autres jeux"
         ]
       }
@@ -132,30 +169,27 @@ La livraison est gratuite à Dakar. Dans les autres villes du Sénégal 🇸🇳
       }
     ]
   },
-  'shop-mode': {
+  'amani': {
     'infos': [
       {
         type: 'assistant',
-        content: `Cette robe Bogolan est une création unique qui allie modernité et tradition. Elle est confectionnée avec :
+        content: `Mia est une solution innovante pour soulager les douleurs menstruelles grâce à la therapie par la chaleur et le massage.
 
-• Tissu Bogolan authentique du Mali
-• Coupe moderne et élégante
-• Finitions soignées à la main
-• Doublure en coton respirant
+La chaleur facilite l'écoulement du sang et le massage détend les muscles, ce qui aide à réduire drastiquement la douleur, voire à la supprimer.
 
-Vous pouvez l'acheter toute seule ou opter pour l'un de nos ensembles.`,
+Mia a été conçue pour être discrète et confortable sous vos vêtements, afin de vous accompagner en toute sérénité tout au long de la journée, durant votre période du mois.`,
         media: [{
           type: 'image',
-          url: '/images/products/robe-bogolan.webp',
-          alt: 'Robe en tissu Bogolan',
-          caption: 'Notre robe signature en Bogolan'
+          url: '/images/products/mia-belt.jpg',
+          alt: 'Ceinture chauffante Mia',
+          caption: 'Notre ceinture chauffante Mia'
         }]
       },
       {
         type: 'user-choices',
         choices: [
-          "Voir les ensembles",
-          "Commander la robe",
+          "Comment ça fonctionne ?",
+          "Commander maintenant",
           "Voir les prix"
         ]
       }
@@ -163,78 +197,77 @@ Vous pouvez l'acheter toute seule ou opter pour l'un de nos ensembles.`,
     'prix': [
       {
         type: 'assistant',
-        content: `La robe seule est à 35 000 FCFA. Cependant, vous pouvez bénéficier des offres suivantes :
+        content: `La ceinture chauffante Mia est actuellement en promotion à 29 900 FCFA au lieu de 34 000 FCFA !
 
-• Ensemble Complet (Robe + Sac + Écharpe) : 68 000 FCFA au lieu de 75 000 FCFA
-• Ensemble Essentiel (Robe + Sac) : 55 000 FCFA au lieu de 60 000 FCFA
-• Duo Élégant (Robe + Écharpe) : 45 000 FCFA au lieu de 50 000 FCFA
+Nous proposons également plusieurs packs avantageux :
 
-💫 La livraison est offerte sur tous les ensembles !`
+• Pack Sérénité (Ceinture + Housse de transport) : 32 500 FCFA
+• Pack Complet (Ceinture + Housse + Tisanes bio) : 38 700 FCFA
+• Pack Famille (2 ceintures) : 54 900 FCFA (-10%)
+
+💝 La livraison est gratuite pour toute commande supérieure à 40 000 FCFA.`
       },
       {
         type: 'assistant',
-        content: `Articles individuels :
-• Robe Bogolan : 35 000 FCFA
-• Sac assorti : 25 000 FCFA
-• Écharpe : 15 000 FCFA
-• Bandeau : 8 000 FCFA
+        content: `Accessoires disponibles séparément :
+• Housse de transport imperméable : 4 500 FCFA
+• Pochette de tisanes bio (30 sachets) : 6 900 FCFA
+• Batterie de rechange supplémentaire : 8 500 FCFA
 
-La livraison est offerte à partir de 54 000 FCFA d'achat.`,
+Garantie 1 an incluse sur tous nos produits.`,
       },
       {
         type: 'user-choices',
         choices: [
-          "Choisir un ensemble",
-          "Commander la robe",
+          "Choisir un pack",
+          "Commander la ceinture seule",
           "Voir les accessoires"
         ]
       }
     ]
   },
-  'restaurant': {
+  'ecoboom': {
     'infos': [{
       type: 'assistant',
-      content: "Notre box signature est préparée chaque jour avec des produits frais et locaux. Elle contient :",
+      content: "Nos couches biodégradables Ecoboom sont spécialement conçues pour le confort de votre bébé et le respect de l'environnement :",
       media: [{
         type: 'image',
-        url: '/images/products/box-de-snacks.webp',
-        alt: 'Box de snacks',
-        caption: 'Notre box signature'
+        url: '/images/products/ecoboom-diapers.jpg',
+        alt: 'Couches Ecoboom',
+        caption: 'Nos couches biodégradables en bambou'
       }]
     }, {
       type: 'assistant',
-      content: `• Une sélection de snacks variés et équilibrés
-- Des ingrédients 100% naturels et locaux
-- Des portions généreuses
-- Un packaging écologique`,
+      content: `• Nos couches sont fabriquées à partir de fibres de bambou biodégradables
+• Sans produits chimiques nocifs ni parfums
+• Absorption supérieure jusqu'à 12h
+• Toucher ultra-doux pour la peau sensible de votre bébé
+• Emballage recyclable et éco-responsable`,
     }, {
       type: 'user-choices',
       choices: [
         "Je souhaite commander",
-        "Voir les prix",
-        "Voir les accompagnements"
+        "Voir les tailles et prix",
+        "Questions fréquentes"
       ]
     }],
     'prix': [{
       type: 'assistant',
-      content: `Voici nos offres pour la box de snacks :
+      content: `Voici nos packs de couches Ecoboom disponibles :
 
-- 1 box : 13 000 FCFA
-- 2 box : 23 400 FCFA (-10%)
-- 3 box et plus : -15%
+• Pack Nouveau-né (0-4.5kg) : 34 couches - 4 800 FCFA
+• Pack Taille S (3-8kg) : 36 couches - 5 400 FCFA
+• Pack Taille M (6-10kg) : 32 couches - 6 400 FCFA
+• Pack Taille L (9-14kg) : 30 couches - 6 900 FCFA
+• Pack Taille XL (12-17kg) : 28 couches - 7 500 FCFA
 
-Les boissons :
-- Bissap frais : 2 000 FCFA
-- Gingembre frais : 2 000 FCFA
-- Cocktail detox : 2 500 FCFA
-
-🚚 La livraison est gratuite à Dakar 🇸🇳`
+🌿 Réduction de 10% pour 3 packs achetés, 15% pour 5 packs et plus`
     }, {
       type: 'user-choices',
       choices: [
         "Commander maintenant",
-        "En savoir plus",
-        "Voir les boissons"
+        "Programme d'abonnement",
+        "Voir les coffrets découverte"
       ]
     }]
   }
@@ -283,10 +316,10 @@ export const checkoutFlow = {
   
   additionalProducts: [{
     type: 'assistant',
-    content: "Excellent choix ! 🎉 Savez-vous que nous avons d'autres jeux qui pourraient vous intéresser ?"
+    content: "Excellent choix ! 🎉 Savez-vous que nous avons d'autres produits qui pourraient vous intéresser ?"
   }, {
     type: 'user-choices',
-    choices: ["Voir les autres jeux", "Continuer avec ma commande"]
+    choices: ["Voir les autres produits", "Continuer avec ma commande"]
   }],
   
   contactInfo: [{
@@ -296,43 +329,43 @@ export const checkoutFlow = {
   
   address: [{
     type: 'assistant',
-    content: ({ firstName }) => `Merci ${firstName} ! 🙂 Dans quelle ville habitez-vous ?`
+    content: ({ firstName }: FirstNameParam) => `Merci ${firstName} ! 🙂 Dans quelle ville habitez-vous ?`
   }],
   
   deliveryAddress: [{
     type: 'assistant',
-    content: ({ city }) => `Parfait ! Quelle est votre adresse exacte à ${city} ?`
+    content: ({ city }: CityParam) => `Parfait ! Quelle est votre adresse exacte à ${city} ?`
   }],
   
   phone: [{
     type: 'assistant',
-    content: ({ firstName }) => `Super ${firstName} ! Quel est votre numéro de téléphone 📱 ? C'est important pour la livraison.`
+    content: ({ firstName }: FirstNameParam) => `Super ${firstName} ! Quel est votre numéro de téléphone 📱 ? C'est important pour la livraison.`
   }],
   
   paymentMethod: [{
     type: 'assistant',
-    content: ({ orderData, activeScenario, totalAmount }) => {
+    content: ({ orderData, totalAmount }: Omit<PaymentMethodParam, 'activeScenario'>) => {
       const deliveryCost = orderData.city.toLowerCase() === 'dakar' ? 0 : 3000;
       
-      return `📋 Voici le récapitulatif de votre commande :
-
-${orderData.orderDetails}
-
-📍 Informations de livraison :
-• Ville : ${orderData.city}
-• Adresse : ${orderData.address}
-• Frais de livraison : ${deliveryCost} F CFA
-• Téléphone : ${orderData.phone}
-
-💰 Total à payer : ${totalAmount.toLocaleString()} F CFA
-
-Choisissez votre mode de paiement ci-dessous.
-
-⚠️ Les personnes qui paient à l'avance sont prioritaires pour la livraison.`
+      return `📋 <strong>Voici le récapitulatif de votre commande :</strong>
+  
+  ${orderData.orderDetails}
+  
+  📍 Informations de livraison :
+  • Ville : <strong>${orderData.city}</strong>
+  • Adresse : <strong>${orderData.address}</strong>
+  • Frais de livraison : <strong>${deliveryCost} F CFA</strong>
+  • Téléphone : <strong>${orderData.phone}</strong>
+  
+  💰 Total à payer : <strong>${totalAmount.toLocaleString()} F CFA</strong>
+  
+  Choisissez votre mode de paiement ci-dessous.
+  
+  ⚠️ Les personnes qui paient à l'avance sont prioritaires pour la livraison.`
     }
   }, {
     type: 'user-choices',
-    choices: ["Wave", "Orange Money (bientôt disponible)", "Free Money (bientôt disponible)", "Paiement à la livraison"]
+    choices: ["Wave", "Paiement à la livraison"]
   }],
   
   wavePayment: [{
@@ -341,105 +374,111 @@ Choisissez votre mode de paiement ci-dessous.
   }]
 };
 
-export const shopModeFlow = {
+export const amaniFlow = {
   ...checkoutFlow,
   size: [{
     type: 'assistant',
-    content: `Pour vous aider à choisir la bonne taille de la robe Bogolan :
+    content: `Pour votre ceinture chauffante Mia, nous avons un modèle unique qui s'ajuste à tous les tours de taille grâce à sa sangle élastique ajustable.
 
-📏 Voici notre guide des tailles :
-• S : 36-38 (tour de poitrine : 85-90cm)
-• M : 38-40 (tour de poitrine : 90-95cm)
-• L : 40-42 (tour de poitrine : 95-100cm)
-• XL : 42-44 (tour de poitrine : 100-105cm)
-• XXL : 44-46 (tour de poitrine : 105-110cm)
-
-Quelle taille souhaitez-vous commander ?`
+Avez-vous besoin d'accessoires complémentaires pour optimiser votre expérience ?`
   }, {
     type: 'user-choices',
-    choices: ["S", "M", "L", "XL", "XXL"]
+    choices: ["Ajouter la housse de transport", "Ajouter les tisanes bio", "Ajouter une batterie supplémentaire", "Continuer sans accessoire"]
   }],
   
   accessories: [{
     type: 'assistant',
-    content: "Pour sublimer votre tenue, voici notre sélection d'accessoires assortis :",
+    content: "Pour compléter votre ceinture Mia, voici les accessoires disponibles :",
     media: [
       {
         type: 'image',
-        url: '/images/products/sac-bogolan.webp',
-        alt: 'Sac en Bogolan',
-        caption: 'Sac en Bogolan (25 000 FCFA)'
+        url: '/images/products/amani-case.jpg',
+        alt: 'Housse de transport',
+        caption: 'Housse de transport (4 500 FCFA)'
       },
       {
         type: 'image',
-        url: '/images/products/echarpe.webp',
-        alt: 'Écharpe assortie',
-        caption: 'Écharpe (15 000 FCFA)'
+        url: '/images/products/amani-tea.jpg',
+        alt: 'Tisanes bio',
+        caption: 'Tisanes bio - 30 sachets (6 900 FCFA)'
       },
       {
         type: 'image',
-        url: '/images/products/bandeau.webp',
-        alt: 'Bandeau coordonné',
-        caption: 'Bandeau (8 000 FCFA)'
+        url: '/images/products/amani-battery.jpg',
+        alt: 'Batterie supplémentaire',
+        caption: 'Batterie de rechange (8 500 FCFA)'
       }
     ]
   }, {
     type: 'user-choices',
     choices: [
-      "Ajouter le sac",
-      "Ajouter l'écharpe",
-      "Ajouter le bandeau",
+      "Ajouter la housse",
+      "Ajouter les tisanes",
+      "Ajouter la batterie",
       "Continuer sans accessoire"
     ]
   }]
 };
 
-export const restaurantFlow = {
+export const ecoboomFlow = {
   ...checkoutFlow,
+  size: [{
+    type: 'assistant',
+    content: `Quelle taille de couches souhaitez-vous commander pour votre bébé ?
+    
+• Nouveau-né : 0-4.5kg (34 couches)
+• Taille S : 3-8kg (36 couches)
+• Taille M : 6-10kg (32 couches)
+• Taille L : 9-14kg (30 couches)
+• Taille XL : 12-17kg (28 couches)
+
+Pour choisir la taille idéale, référez-vous au poids actuel de votre bébé.`
+  }, {
+    type: 'user-choices',
+    choices: ["Nouveau-né", "Taille S", "Taille M", "Taille L", "Taille XL"]
+  }],
+  
   quantity: [{
     type: 'assistant',
-    content: ({previousOrders} = {}) => `
-${previousOrders ? "Ravi de vous revoir ! " : ""}Notre box signature contient une sélection de snacks préparés avec des produits frais du jour 😋
+    content: ({ previousOrders }: PreviousOrdersParam = {}) => `
+${previousOrders ? "Ravi de vous revoir ! " : ""}Nos couches Ecoboom sont vendues par pack :
 
-Combien souhaitez-vous en commander ?
-• 1 box : 13 000 FCFA
-• 2 box : 23 400 FCFA (-10%)
-• 3 box : 33 150 FCFA (-15%)`
+• 1 pack au prix standard
+• 3 packs : -10% sur le total
+• 5 packs et plus : -15% sur le total
+
+L'abonnement mensuel vous offre -20% sur chaque livraison récurrente.
+      
+Combien de packs souhaitez-vous commander ?`
   }, {
     type: 'user-choices',
-    choices: ["1 box", "2 box (-10%)", "3 box (-15%)", "Plus"]
+    choices: ["1 pack", "3 packs (-10%)", "5 packs (-15%)", "M'abonner (-20%)"]
   }],
   
-  timeSlot: [{
+  subscription: [{
     type: 'assistant',
-    content: ({boxQuantity}) => `Super ! Pour vos ${boxQuantity} box${boxQuantity > 1 ? 's' : ''}, à quelle heure souhaitez-vous recevoir votre commande ? 🕒`
-  }, {
-    type: 'user-choices',
-    choices: ["12h - 13h", "13h - 14h", "19h - 20h", "20h - 21h"]
-  }],
-  
-  addons: [{
-    type: 'assistant',
-    content: "Et pour accompagner vos snacks, nous avons une sélection de boissons fraîches faites maison 🥤\n\n• Bissap frais (2 000 FCFA)\n• Gingembre frais (2 000 FCFA)\n• Cocktail detox (2 500 FCFA)"
+    content: `Notre programme d'abonnement vous permet de recevoir vos couches automatiquement selon la fréquence de votre choix, avec 20% de réduction permanente !
+
+Choisissez votre fréquence de livraison :`
   }, {
     type: 'user-choices',
     choices: [
-      "Ajouter le Bissap",
-      "Ajouter le Gingembre",
-      "Ajouter le Cocktail detox",
-      "Continuer sans boisson"
+      "Toutes les 2 semaines",
+      "Tous les mois",
+      "Tous les 2 mois",
+      "Commander sans abonnement"
     ]
   }],
   
-  orderSummary: [{
+  additionalProducts: [{
     type: 'assistant',
-    content: ({ orderData, totalAmount }) => `
-Voici le récapitulatif de votre commande 📝
-
-${orderData.quantity} Box ${orderData.quantity > 1 ? `(-${orderData.quantity >= 3 ? '15' : '10'}%)` : ''}
-${orderData.drinks.length > 0 ? `\nBoissons :\n${orderData.drinks.map(drink => `• ${drink}`).join('\n')}` : ''}
-
-Livraison : ${orderData.deliveryTime}
-Total : ${totalAmount.toLocaleString()} FCFA`
+    content: "Souhaitez-vous ajouter d'autres produits de notre gamme pour bébé ?"
+  }, {
+    type: 'user-choices',
+    choices: [
+      "Ajouter des lingettes biodégradables",
+      "Ajouter un pack d'essai de crème change",
+      "Continuer sans produit supplémentaire"
+    ]
   }]
 };

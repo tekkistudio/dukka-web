@@ -1,3 +1,4 @@
+// src/components/sections/HowItWorksSection.tsx
 'use client'
 
 import { Store, MessageCircle, CreditCard, Rocket } from 'lucide-react'
@@ -20,12 +21,12 @@ const steps = [
   {
     Icon: CreditCard,
     title: 'Encaissez simplement',
-    description: 'Acceptez tous les paiements locaux (Wave, Orange Money, etc.) sans friction et en toute sécurité.'
+    description: 'Acceptez les paiements par mobile money et cartes bancaires, sans friction et en toute sécurité.'
   },
   {
     Icon: Rocket,
     title: 'Développez vos ventes',
-    description: 'Comprenez vos performances et recevez des conseils personnalisés pour augmenter vos ventes.'
+    description: 'Votre Assistant IA vous aide à comprendre vos performances, améliorer votre business et augmenter vos ventes.'
   }
 ]
 
@@ -86,7 +87,7 @@ export function HowItWorksSection() {
           animate={isTitleInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <GradientTitle subtitle="Transformez les conversations avec vos clients en ventes avec Dukka, la première solution e-commerce qui s'adapte à la façon dont les Africains aiment acheter.">
+          <GradientTitle subtitle="Pas besoin de savoir coder ou d'avoir des compétences techniques poussées. Avec Dukka, tout a été simplifié pour vous permettre de vous lancer rapidement.">
             Lancez votre boutique en ligne en 4 étapes simples
           </GradientTitle>
         </motion.div>

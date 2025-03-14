@@ -1,3 +1,4 @@
+// src/components/sections/footer/FooterContent.tsx
 'use client'
 
 import Image from 'next/image'
@@ -5,8 +6,8 @@ import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
 
 const footerLinks = {
   product: [
-    { name: 'Fonctionnalités', href: '/fonctionnalites' },
-    { name: 'Tarifs', href: '#' },
+    { name: 'Fonctionnalités', href: '#features' },
+    { name: 'Tarifs', href: '#comparison' },
     { name: 'Témoignages', href: '#' },
     { name: 'Guide d\'utilisation', href: '#' },
     { name: 'Mises à jour', href: '#' }

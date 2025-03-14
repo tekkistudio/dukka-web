@@ -1,25 +1,29 @@
+// src/components/sections/DemoSection.tsx
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { GradientTitle } from '@/components/GradientTitle'
-import { MessageCircle, ShoppingBag, Banknote } from 'lucide-react'
+import { MessageCircle, ShoppingBag, CreditCard, CheckSquare } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { 
   scenarios, 
   buildConversation, 
   botResponses, 
   checkoutFlow, 
   otherProducts,
-  shopModeFlow,
-  restaurantFlow 
+  amaniFlow,
+  ecoboomFlow 
 } from './demo/data'
+import { WaitlistButton } from '@/components/WaitlistButton'
 
+// Chargement dynamique des composants
 const ChatInterface = dynamic(
   () => import('@/components/sections/demo/ChatInterface').then(mod => mod.ChatInterface),
   { 
     ssr: false,
     loading: () => (
-      <div className="h-[600px] bg-gray-50 animate-pulse rounded-lg flex items-center justify-center text-gray-500">
+      <div className="h-[550px] bg-gray-50 animate-pulse rounded-lg flex items-center justify-center text-gray-500">
         Chargement de l'interface...
       </div>
     )
@@ -31,37 +35,35 @@ const ScenarioSelector = dynamic(
   { ssr: false }
 )
 
-const FeatureList = dynamic(
-  () => import('@/components/sections/demo/FeatureList').then(mod => mod.FeatureList),
-  { ssr: false }
-)
-
+// Features mise à jour avec des icônes plus pertinentes
 const features = [
   {
     icon: MessageCircle,
     title: 'Conversation naturelle',
-    description: 'Un dialogue simple et fluide qui guide le client du choix du produit à l\'achat'
+    description: 'Un dialogue simple et fluide qui guide le client du choix du produit jusqu\'à l\'achat, comme dans une boutique physique.'
   },
   {
-    icon: ShoppingBag,
+    icon: CheckSquare,
     title: 'Checkout intégré',
-    description: 'Le processus d\'achat se fait naturellement dans la conversation'
+    description: 'Le processus d\'achat se fait naturellement dans la conversation, sans formulaires complexes à remplir.'
   },
   {
-    icon: Banknote,
+    icon: CreditCard,
     title: 'Paiement mobile',
-    description: 'Intégration des modes de paiement que vos clients préfèrent (Wave, OM, etc.)'
+    description: 'Intégration directe des solutions de paiement que vos clients utilisent déjà (Wave, OM, etc.), en plus du paiement par carte bancaire.'
   }
 ]
 
 export function DemoSection() {
-  // États initiaux inchangés
+  // États et fonctions du composant original
   const [activeScenario, setActiveScenario] = useState(scenarios[0])
   const [messages, setMessages] = useState<any[]>([])
   const [isTyping, setIsTyping] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const [checkoutStep, setCheckoutStep] = useState<string>('')
+  const [activeFeatureIndex, setActiveFeatureIndex] = useState(0)
+  const [inCheckoutFlow, setInCheckoutFlow] = useState(false) // Nouvel état pour suivre si on est dans le flow d'achat
   const chatRef = useRef<HTMLDivElement>(null)
   const [orderData, setOrderData] = useState({
     quantity: 0,
@@ -80,15 +82,29 @@ export function DemoSection() {
     orderDetails: ''
   })
 
+  // Cycle automatique à travers les fonctionnalités
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveFeatureIndex(prev => (prev + 1) % features.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     setIsMounted(true)
     setMessages(buildConversation(scenarios[0]))
   }, [])
 
+  // Mise à jour de inCheckoutFlow en fonction de checkoutStep
+  useEffect(() => {
+    // Si checkoutStep a une valeur, nous sommes dans le flow d'achat
+    setInCheckoutFlow(!!checkoutStep);
+  }, [checkoutStep]);
+
   const calculateTotal = () => {
     const basePrice = activeScenario.product.price;
     let total = 0;
-    let deliveryCost = orderData.city.toLowerCase() === 'dakar' ? 0 : 3000;
+    let deliveryCost = orderData.city?.toLowerCase() === 'dakar' ? 0 : 3000;
 
     switch (activeScenario.id) {
       case 'viens-on-sconnait':
@@ -119,53 +135,79 @@ export function DemoSection() {
         total += deliveryCost;
         break;
 
-      case 'shop-mode':
-        // Gestion des ensembles
-        if (orderData.accessories.length > 0) {
-          const hasRobe = true; // La robe est toujours incluse
-          const hasSac = orderData.accessories.some(a => a.includes('Sac'));
-          const hasEcharpe = orderData.accessories.some(a => a.includes('Écharpe'));
-          const hasBandeau = orderData.accessories.some(a => a.includes('Bandeau'));
+      case 'amani':
+        // Prix de base pour la ceinture
+        total = basePrice;
+        
+        // Gestion des accessoires
+        if (orderData.accessories && orderData.accessories.length > 0) {
+          const hasHousse = orderData.accessories.some(a => a.includes('housse'));
+          const hasTisanes = orderData.accessories.some(a => a.includes('tisanes'));
+          const hasBatterie = orderData.accessories.some(a => a.includes('batterie'));
 
-          if (hasRobe && hasSac && hasEcharpe) {
-            total = 68000; // Ensemble Complet
-          } else if (hasRobe && hasSac) {
-            total = 55000; // Ensemble Essentiel
-          } else if (hasRobe && hasEcharpe) {
-            total = 45000; // Duo Élégant
+          if (hasHousse && hasTisanes) {
+            total = 38700; // Pack Complet
+          } else if (hasHousse) {
+            total = 32500; // Pack Sérénité
           } else {
-            total = basePrice;
-            if (hasSac) total += 25000;
-            if (hasEcharpe) total += 15000;
-            if (hasBandeau) total += 8000;
+            // Ajout individuel des accessoires
+            if (hasHousse) total += 4500;
+            if (hasTisanes) total += 6900;
+            if (hasBatterie) total += 8500;
           }
-        } else {
-          total = basePrice;
         }
-
-        // Ajout des frais de livraison si nécessaire
-        if (total < 54000) {
+        
+        // Livraison gratuite au-dessus de 30 000 FCFA
+        if (total < 30000) {
           total += deliveryCost;
         }
         break;
 
-      case 'restaurant':
-        const boxQuantity = orderData.quantity || 1;
-        const boxPrice = 13000;
+      case 'ecoboom':
+        // Prix selon la taille choisie
+        let packPrice = basePrice;
         
-        // Prix de base pour les box avec remises
-        if (boxQuantity >= 3) {
-          total = boxPrice * boxQuantity * 0.85; // -15%
-        } else if (boxQuantity === 2) {
-          total = boxPrice * 2 * 0.9; // -10%
-        } else {
-          total = boxPrice;
+        if (orderData.size) {
+          switch(orderData.size) {
+            case 'Nouveau-né':
+              packPrice = 4800;
+              break;
+            case 'Taille S':
+              packPrice = 5400;
+              break;
+            case 'Taille M':
+              packPrice = 6400;
+              break;
+            case 'Taille L':
+              packPrice = 6900;
+              break;
+            case 'Taille XL':
+              packPrice = 7500;
+              break;
+          }
         }
         
-        // Ajout des boissons
-        orderData.drinks.forEach(drink => {
-          total += drink.includes('Cocktail') ? 2500 : 2000;
-        });
+        // Calcul des réductions selon la quantité
+        const packQuantity = orderData.quantity || 1;
+        
+        if (packQuantity >= 5) {
+          total = packPrice * packQuantity * 0.85; // -15%
+        } else if (packQuantity >= 3) {
+          total = packPrice * packQuantity * 0.9; // -10%
+        } else {
+          total = packPrice * packQuantity;
+        }
+        
+        // Ajout des produits supplémentaires
+        if (orderData.additionalProducts && orderData.additionalProducts.length > 0) {
+          orderData.additionalProducts.forEach(product => {
+            if (product.includes('lingettes')) {
+              total += 3500;
+            } else if (product.includes('crème')) {
+              total += 2800;
+            }
+          });
+        }
 
         total += deliveryCost;
         break;
@@ -230,13 +272,65 @@ export function DemoSection() {
     setIsTyping(false);
   };
 
+  // Nouvelle fonction pour ajouter une réponse IA
+  const handleAiResponse = (aiResponse: string) => {
+    setIsTyping(true);
+    
+    // Simuler un délai de "frappe" pour une expérience plus réaliste
+    setTimeout(() => {
+      // Ajouter la réponse de l'IA avec le type 'assistant'
+      setMessages(prev => [...prev, {
+        type: 'assistant',
+        content: aiResponse
+      }]);
+      
+      if (chatRef.current) {
+        chatRef.current.scrollTop = chatRef.current.scrollHeight;
+      }
+      
+      setIsTyping(false);
+      
+      // Ajouter des suggestions basées sur la réponse IA
+      const suggestedResponses = getSuggestedResponsesFromAI(aiResponse);
+      if (suggestedResponses.length > 0) {
+        setMessages(prev => [...prev, {
+          type: 'user-choices',
+          choices: suggestedResponses
+        }]);
+      }
+    }, 1000);
+  };
+  
+  // Helper pour déterminer les suggestions basées sur la réponse IA
+  const getSuggestedResponsesFromAI = (aiResponse: string): string[] => {
+    if (aiResponse.includes('prix') || aiResponse.includes('FCFA')) {
+      return ["Je souhaite commander", "Voir les options", "En savoir plus"];
+    }
+    
+    if (aiResponse.includes('livraison')) {
+      return ["Je souhaite commander", "Autres questions"];
+    }
+    
+    // Suggestions par défaut selon le scénario
+    switch (activeScenario.id) {
+      case 'viens-on-sconnait':
+        return ["Je souhaite commander", "Voir les packs", "Autres questions"];
+      case 'amani':
+        return ["Je souhaite commander", "Comment ça fonctionne ?", "Voir les avis clients"];
+      case 'ecoboom':
+        return ["Je souhaite commander", "Voir les tailles", "Questions fréquentes"];
+      default:
+        return ["Je souhaite commander", "En savoir plus"];
+    }
+  };
+
   const handleStartOrder = async () => {
-    if (activeScenario.id === 'shop-mode') {
+    if (activeScenario.id === 'amani') {
       setCheckoutStep('size');
-      await addBotResponse(shopModeFlow.size);
-    } else if (activeScenario.id === 'restaurant') {
-      setCheckoutStep('quantity');
-      await addBotResponse(restaurantFlow.quantity);
+      await addBotResponse(amaniFlow.size);
+    } else if (activeScenario.id === 'ecoboom') {
+      setCheckoutStep('size');
+      await addBotResponse(ecoboomFlow.size);
     } else {
       setCheckoutStep('quantity');
       await addBotResponse([{
@@ -259,23 +353,17 @@ export function DemoSection() {
     }));
 
     switch (activeScenario.id) {
-      case 'shop-mode':
-        setCheckoutStep('size');
-        await addBotResponse(shopModeFlow.size);
+      case 'amani':
+        setCheckoutStep('accessories');
+        await addBotResponse(amaniFlow.accessories);
         break;
-      case 'restaurant':
-        if (!orderData.deliveryTime) {
-          setCheckoutStep('timeSlot');
-          await addBotResponse([{
-            type: 'assistant',
-            content: `Super ! Pour vos ${quantity} box, à quelle heure souhaitez-vous les recevoir ? 🕒`
-          }, {
-            type: 'user-choices',
-            choices: ["12h - 13h", "13h - 14h", "19h - 20h", "20h - 21h"]
-          }]);
+      case 'ecoboom':
+        if (choice.includes("M'abonner")) {
+          setCheckoutStep('subscription');
+          await addBotResponse(ecoboomFlow.subscription);
         } else {
-          setCheckoutStep('addons');
-          await addBotResponse(restaurantFlow.addons);
+          setCheckoutStep('additionalProducts');
+          await addBotResponse(ecoboomFlow.additionalProducts);
         }
         break;
       case 'viens-on-sconnait':
@@ -297,169 +385,271 @@ export function DemoSection() {
     }
   };
 
-  const handleTimeSlot = async (choice: string) => {
-    setOrderData(prev => ({
-      ...prev,
-      deliveryTime: choice,
-      orderDetails: prev.orderDetails + `\n• Livraison prévue : ${choice}`
+  const handleSizeChoice = async (choice: string) => {
+    setOrderData(prev => ({ 
+      ...prev, 
+      size: choice,
+      orderDetails: `• ${activeScenario.product.name} ${choice.includes('Taille') ? `(${choice})` : ''}`
     }));
-    
-    setCheckoutStep('addons');
-    await addBotResponse([{
-      type: 'assistant',
-      content: `Super ! Voici notre sélection de boissons fraîches faites maison pour accompagner vos snacks 🥤
 
-• Bissap frais (2 000 FCFA)
-• Gingembre frais (2 000 FCFA)
-• Cocktail detox (2 500 FCFA)`
-    }, {
-      type: 'user-choices',
-      choices: [
-        "Ajouter le Bissap",
-        "Ajouter le Gingembre",
-        "Ajouter le Cocktail detox",
-        "Continuer sans boisson"
-      ]
-    }]);
+    switch (activeScenario.id) {
+      case 'amani':
+        setCheckoutStep('quantity');
+        await addBotResponse([{
+          type: 'assistant',
+          content: "Combien de ceintures souhaitez-vous commander ?"
+        }, {
+          type: 'user-choices',
+          choices: ["1 ceinture", "2 ceintures (-10%)", "Pack famille"]
+        }]);
+        break;
+      case 'ecoboom':
+        setCheckoutStep('quantity');
+        await addBotResponse(ecoboomFlow.quantity);
+        break;
+    }
   };
 
-  // Modification du handleShopModeFlow
-const handleShopModeFlow = async (choice: string) => {
-  if (!choice) return;
-
-  // Gestion du choix des ensembles
-  if (choice === "Voir les ensembles") {
-    await addBotResponse([{
-      type: 'assistant',
-      content: `Voici nos ensembles coordonnés :
-
-🌟 Ensemble Complet :
-• Robe + Sac + Écharpe = 68 000 FCFA (au lieu de 75 000 FCFA)
-
-✨ Ensemble Essentiel :
-• Robe + Sac = 55 000 FCFA (au lieu de 60 000 FCFA)
-
-💝 Duo Élégant :
-• Robe + Écharpe = 45 000 FCFA (au lieu de 50 000 FCFA)
-
-La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
-      }, {
-        type: 'user-choices',
-        choices: [
-          "Choisir Ensemble Complet",
-          "Choisir Ensemble Essentiel",
-          "Choisir Duo Élégant",
-          "Commander la robe seule"
-        ]
-      }]);
-    return;
-  }
-
-  // Gestion du choix d'un ensemble spécifique
-  if (choice.includes("Choisir Ensemble")) {
-    const ensembleType = choice.split("Choisir ")[1];
-    const accessories = {
-      "Ensemble Complet": ["Sac", "Écharpe"],
-      "Ensemble Essentiel": ["Sac"],
-      "Duo Élégant": ["Écharpe"]
-    };
+  const handleSubscriptionChoice = async (choice: string) => {
+    if (choice === "Commander sans abonnement") {
+      setCheckoutStep('additionalProducts');
+      await addBotResponse(ecoboomFlow.additionalProducts);
+      return;
+    }
 
     setOrderData(prev => ({
       ...prev,
-      accessories: accessories[ensembleType] || [],
-      orderDetails: `• ${ensembleType}`,
-      quantity: 1
-    }));
-
-    setCheckoutStep('size');
-    await addBotResponse(shopModeFlow.size);
-    return;
-  }
-
-  // Gestion des étapes suivantes du flow
-  if (checkoutStep === 'size') {
-    setOrderData(prev => ({
-      ...prev,
-      size: choice,
-      orderDetails: prev.accessories.length > 0 ?
-        `• ${prev.orderDetails} (Taille ${choice})` :
-        `• Robe Bogolan (Taille ${choice})`
+      orderDetails: prev.orderDetails + `\n• Abonnement: ${choice} (-20%)`
     }));
     
-    // Si pas d'ensemble choisi, proposer les accessoires
-    if (!orderData.accessories.length) {
-      setCheckoutStep('accessories');
-      await addBotResponse(shopModeFlow.accessories);
-    } else {
-      // Si ensemble déjà choisi, passer directement aux infos de contact
-      setCheckoutStep('contactInfo');
-      await addBotResponse(checkoutFlow.contactInfo);
-    }
-  } else if (checkoutStep === 'accessories') {
-    if (!choice.includes('Continuer')) {
-      const accessory = choice.split('Ajouter ')[1];
-      setOrderData(prev => ({
-        ...prev,
-        accessories: [...prev.accessories, accessory],
-        orderDetails: prev.orderDetails + `\n• ${accessory}`
-      }));
-      await addBotResponse([
-        {
-          type: 'assistant',
-          content: `J'ai bien ajouté ${accessory} à votre commande 👜 Souhaitez-vous ajouter un autre accessoire ?`
-        },
-        ...shopModeFlow.accessories
-      ]);
-    } else {
-      setCheckoutStep('contactInfo');
-      await addBotResponse(checkoutFlow.contactInfo);
-    }
-  }
-};
+    setCheckoutStep('additionalProducts');
+    await addBotResponse(ecoboomFlow.additionalProducts);
+  };
 
-  const handleRestaurantFlow = async (choice: string) => {
+  const handleAmaniFlow = async (choice: string) => {
     if (!choice) return;
-  
-    if (checkoutStep === 'addons') {
+
+    // Gestion des accessoires
+    if (checkoutStep === 'accessories') {
       if (!choice.includes('Continuer')) {
-        const drink = choice.split('Ajouter ')[1];
+        const accessory = choice.split('Ajouter ')[1];
         setOrderData(prev => ({
           ...prev,
-          drinks: [...prev.drinks, drink],
-          orderDetails: prev.orderDetails + `\n• ${drink}`
+          accessories: [...(prev.accessories || []), accessory],
+          orderDetails: prev.orderDetails ? prev.orderDetails + `\n• ${accessory}` : `• ${accessory}`
         }));
         await addBotResponse([
           {
             type: 'assistant',
-            content: `J'ai bien ajouté ${drink} à votre commande 🥤 Souhaitez-vous ajouter une autre boisson ?`
+            content: `J'ai bien ajouté ${accessory} à votre commande. Souhaitez-vous ajouter un autre accessoire ?`
           },
-          ...restaurantFlow.addons
+          ...amaniFlow.accessories
         ]);
       } else {
         setCheckoutStep('contactInfo');
         await addBotResponse(checkoutFlow.contactInfo);
       }
-    } else if (choice === "Commander avec boisson" || choice === "Commander sans boisson") {
-      setCheckoutStep('quantity');
-      await addBotResponse(restaurantFlow.quantity);
-    } else if (checkoutStep === 'timeSlot') {
-      await handleTimeSlot(choice);
-    } else if (choice === "Voir les accompagnements") {
+    } else if (checkoutStep === 'quantity') {
+      await handleQuantityChoice(choice);
+    } else if (choice === "Comment ça fonctionne ?") {
       await addBotResponse([{
         type: 'assistant',
-        content: `Voici notre sélection de boissons fraîches faites maison 🥤
+        content: `La ceinture chauffante Mia est très simple d'utilisation :
 
-• Bissap frais (2 000 FCFA)
-• Gingembre frais (2 000 FCFA)
-• Cocktail detox (2 500 FCFA)`
+1️⃣ Placez la ceinture sur votre bas-ventre
+2️⃣ Ajustez la sangle élastique pour un maintien confortable
+3️⃣ Appuyez sur le bouton central pour l'allumer
+4️⃣ Sélectionnez le niveau de chaleur souhaité (4 intensités)
+5️⃣ Activez le mode massage vibrant si désiré (4 modes de vibration)
+
+La chaleur diffusée pénètre profondément pour détendre les muscles et soulager les crampes. Vous pouvez porter Mia discrètement sous vos vêtements, à la maison, au bureau, à l'école ou lors de vos déplacements.`
       }, {
         type: 'user-choices',
         choices: [
-          "Commander avec boisson",
-          "Commander sans boisson",
+          "Je souhaite commander",
+          "Voir les avis clients",
+          "En savoir plus"
+        ]
+      }]);
+    } else if (choice === "Voir les avis clients") {
+      await addBotResponse([{
+        type: 'assistant',
+        content: `🌟 Témoignages de nos clientes :
+
+Sarah K. ⭐⭐⭐⭐⭐
+"La ceinture Mia a changé ma vie ! Je peux enfin continuer mes activités pendant mes règles sans être handicapée par la douleur. L'autonomie est excellente et la chaleur vraiment efficace."
+
+Aminata D. ⭐⭐⭐⭐⭐
+"Je souffre d'endométriose et cette ceinture m'apporte un vrai soulagement. J'apprécie particulièrement la fonction massage qui détend les muscles. Je recommande absolument !"
+
+Fatou N. ⭐⭐⭐⭐
+"Produit de qualité qui tient ses promesses. La batterie tient bien la charge. Seul petit bémol : j'aurais aimé qu'elle soit un peu plus large pour couvrir davantage la zone lombaire."
+
+Plus de 50 avis avec une note moyenne de 4.8/5 !`
+      }, {
+        type: 'user-choices',
+        choices: [
+          "Je souhaite commander",
+          "Voir les prix",
+          "Poser une autre question"
+        ]
+      }]);
+    } else if (choice === "Choisir un pack") {
+      await addBotResponse([{
+        type: 'assistant',
+        content: `Voici nos packs disponibles :
+
+🌟 Pack Sérénité : 
+• Ceinture Mia + Housse de transport = 32 500 FCFA (au lieu de 34 400 FCFA)
+
+✨ Pack Complet : 
+• Ceinture Mia + Housse + Tisanes bio = 38 700 FCFA (au lieu de 41 300 FCFA)
+
+💝 Pack Famille (2 ceintures) : 
+• 2 Ceintures Mia = 54 900 FCFA (au lieu de 59 800 FCFA)
+
+La livraison est offerte sur tous les packs ! Que souhaitez-vous ?`
+        }, {
+          type: 'user-choices',
+          choices: [
+            "Choisir Pack Sérénité",
+            "Choisir Pack Complet",
+            "Choisir Pack Famille",
+            "Commander la ceinture seule"
+          ]
+        }]);
+    } else if (choice.includes("Choisir Pack")) {
+      const packType = choice.split("Choisir ")[1];
+      const accessories: Record<string, string[]> = {
+        "Pack Sérénité": ["la housse de transport"],
+        "Pack Complet": ["la housse de transport", "les tisanes bio"],
+        "Pack Famille": []
+      };
+
+      setOrderData(prev => ({
+        ...prev,
+        accessories: accessories[packType] || [],
+        quantity: packType === "Pack Famille" ? 2 : 1,
+        orderDetails: `• ${packType}`
+      }));
+
+      setCheckoutStep('contactInfo');
+      await addBotResponse(checkoutFlow.contactInfo);
+    }
+  };
+
+  const handleEcoboomFlow = async (choice: string) => {
+    if (!choice) return;
+  
+    if (checkoutStep === 'size') {
+      await handleSizeChoice(choice);
+    } else if (checkoutStep === 'quantity') {
+      await handleQuantityChoice(choice);
+    } else if (checkoutStep === 'subscription') {
+      await handleSubscriptionChoice(choice);
+    } else if (checkoutStep === 'additionalProducts') {
+      if (!choice.includes('Continuer')) {
+        const product = choice.split('Ajouter ')[1];
+        setOrderData(prev => ({
+          ...prev,
+          additionalProducts: [...(prev.additionalProducts || []), product],
+          orderDetails: prev.orderDetails + `\n• ${product}`
+        }));
+        await addBotResponse([
+          {
+            type: 'assistant',
+            content: `J'ai bien ajouté ${product} à votre commande. Souhaitez-vous ajouter autre chose ?`
+          },
+          {
+            type: 'user-choices',
+            choices: [
+              "Ajouter des lingettes biodégradables",
+              "Ajouter un pack d'essai de crème change",
+              "Continuer sans produit supplémentaire"
+            ]
+          }
+        ]);
+      } else {
+        setCheckoutStep('contactInfo');
+        await addBotResponse(checkoutFlow.contactInfo);
+      }
+    } else if (choice === "Questions fréquentes") {
+      await addBotResponse([{
+        type: 'assistant',
+        content: `❓ Questions fréquentes sur nos couches Ecoboom :
+
+🌱 En quoi sont-elles écologiques ?
+Nos couches sont fabriquées à partir de fibres de bambou biodégradables. Le bambou est une ressource renouvelable qui pousse rapidement sans pesticides et avec peu d'eau.
+
+⏱️ Combien de temps pour se dégrader ?
+Nos couches se décomposent en 3-5 ans contre 500 ans pour les couches classiques.
+
+🧪 Sont-elles hypoallergéniques ?
+Oui ! Elles sont sans parfum, sans chlore, sans latex et sans phtalates, idéales pour les peaux sensibles.
+
+🔄 Comment fonctionne l'abonnement ?
+Vous recevez automatiquement vos couches à la fréquence choisie avec 20% de réduction, sans engagement.`
+      }, {
+        type: 'user-choices',
+        choices: [
+          "Je souhaite commander",
+          "Voir les tailles et prix",
+          "Programme d'abonnement"
+        ]
+      }]);
+    } else if (choice === "Programme d'abonnement") {
+      await addBotResponse([{
+        type: 'assistant',
+        content: `Notre programme d'abonnement Ecoboom vous simplifie la vie :
+
+✅ 20% de réduction permanente sur tous les produits
+✅ Livraison gratuite et prioritaire
+✅ Flexibilité : modifiez ou suspendez votre abonnement à tout moment
+✅ Possibilité d'ajuster les tailles au fur et à mesure que bébé grandit
+✅ Facture mensuelle automatique
+✅ Cadeaux surprise réguliers pour vous et votre bébé
+
+Sans engagement, annulable à tout moment.`
+      }, {
+        type: 'user-choices',
+        choices: [
+          "M'abonner maintenant",
+          "Commander sans abonnement",
+          "Plus d'informations"
+        ]
+      }]);
+    } else if (choice === "Voir les coffrets découverte") {
+      await addBotResponse([{
+        type: 'assistant',
+        content: `Nos coffrets découverte sont parfaits pour tester nos produits :
+
+🎁 Coffret Naissance (14 500 FCFA) :
+• 10 couches nouveau-né
+• 1 pack de lingettes biodégradables
+• 1 mini crème change naturelle
+• 1 savon doux bio pour bébé
+
+🎁 Coffret Multi-tailles (18 900 FCFA) :
+• 6 couches taille S
+• 6 couches taille M
+• 6 couches taille L
+• 1 pack de lingettes biodégradables
+
+🎁 Coffret Cadeau (21 500 FCFA) :
+• 10 couches au choix
+• 1 ensemble body + bonnet en coton bio
+• 1 coffret soins essentiels bio`
+      }, {
+        type: 'user-choices',
+        choices: [
+          "Commander un coffret",
+          "Commander des packs standard",
           "Voir les prix"
         ]
       }]);
+    } else if (choice === "M'abonner maintenant") {
+      setCheckoutStep('subscription');
+      await addBotResponse(ecoboomFlow.subscription);
     }
   };
 
@@ -531,19 +721,29 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
   const handlePhone = async (choice: string) => {
     setOrderData(prev => ({ ...prev, phone: choice }));
     setCheckoutStep('paymentMethod');
-    await addBotResponse(checkoutFlow.paymentMethod.map(msg => ({
-      ...msg,
-      content: typeof msg.content === 'function' ? 
-        msg.content({ 
-          orderData: { 
-            ...orderData, 
-            phone: choice 
-          }, 
-          activeScenario, 
-          totalAmount: calculateTotal() 
-        }) : 
-        msg.content
-    })));
+    
+    // Création d'un objet de paramètres complet pour le template de paiement
+    const paymentParams = { 
+      orderData: { 
+        ...orderData, 
+        phone: choice 
+      }, 
+      totalAmount: calculateTotal(),
+      activeScenario: activeScenario
+    };
+    
+    // Préparation des messages de paiement
+    const paymentMessages = checkoutFlow.paymentMethod.map(msg => {
+      if (typeof msg.content === 'function') {
+        return {
+          ...msg,
+          content: msg.content(paymentParams)
+        };
+      }
+      return msg;
+    });
+    
+    await addBotResponse(paymentMessages);
   };
 
   const handlePaymentMethod = async (choice: string) => {
@@ -560,7 +760,10 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
     setCheckoutStep('');
   };
 
+  // Fonction améliorée pour gérer les entrées texte avec IA
   const handleTextInput = async (text: string) => {
+    const textLower = text.toLowerCase();
+    
     switch(checkoutStep) {
       case 'contactInfo':
         await handleContactInfo(text);
@@ -575,49 +778,53 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
         await handlePhone(text);
         break;
       default:
-        await addBotResponse([{
-          type: 'assistant',
-          content: "Je comprends votre question. Que souhaitez-vous faire ?"
-        }]);
-        setMessages(prev => [...prev, {
-          type: 'user-choices',
-          choices: [
-            "Je souhaite commander",
-            activeScenario.genre === 'masculin' ? "Combien coûte-t-il ?" : "Combien coûte-t-elle ?"
-          ]
-        }]);
+        // Nous ne traitons pas les entrées texte manuellement ici
+        // lorsque nous ne sommes pas dans le flux de checkout
+        // car cela sera géré par l'IA
+        break;
     }
   };
 
   const handleUserChoice = async (choice: string, isTextInput: boolean = false) => {
     if (!isMounted) return;
   
+    // Ajouter le message de l'utilisateur à la conversation
     setMessages(prev => [...prev, { 
       type: 'user', 
       content: choice 
     }]);
   
     if (isTextInput) {
-      await handleTextInput(choice);
+      // En checkout flow, traiter manuellement l'entrée texte
+      if (inCheckoutFlow) {
+        await handleTextInput(choice);
+      }
+      // Sinon, l'IA s'occupera de répondre via onAiResponse
       return;
     }
 
+    // Gestion des choix utilisateur dans les différentes étapes
     switch(checkoutStep) {
       case 'quantity':
         await handleQuantityChoice(choice);
         break;
       case 'size':
+        await handleSizeChoice(choice);
+        break;
+      case 'subscription':
+        await handleSubscriptionChoice(choice);
+        break;
       case 'accessories':
-        await handleShopModeFlow(choice);
-        break;
-      case 'timeSlot':
-        await handleTimeSlot(choice);
-        break;
-      case 'addons':
-        await handleRestaurantFlow(choice);
+        if (activeScenario.id === 'amani') {
+          await handleAmaniFlow(choice);
+        }
         break;
       case 'additionalProducts':
-        await handleAdditionalProducts(choice);
+        if (activeScenario.id === 'ecoboom') {
+          await handleEcoboomFlow(choice);
+        } else {
+          await handleAdditionalProducts(choice);
+        }
         break;
       case 'contactInfo':
         await handleContactInfo(choice);
@@ -634,281 +841,85 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
       case 'paymentMethod':
         await handlePaymentMethod(choice);
         break;
-        default:
-          // Gestion du scénario Viens on s'connaît
-          if (activeScenario.id === 'viens-on-sconnait') {
-            switch(choice) {
-              case "Je veux en savoir plus":
-                await addBotResponse(botResponses[activeScenario.id]['infos']);
-                break;
-        
-              case "Je souhaite commander":
-                setCheckoutStep('quantity');
-                await addBotResponse([{
-                  type: 'assistant',
-                  content: "C'est entendu ! Combien d'exemplaires souhaitez-vous commander ?"
-                }, {
-                  type: 'user-choices',
-                  choices: ["1 exemplaire", "2 exemplaires", "3 exemplaires", "Plus"]
-                }]);
-                break;
-        
-              case "Ajouter le jeu pour les non mariés":
-              case "Ajouter le jeu Couples":
-                setOrderData(prev => ({
-                  ...prev,
-                  additionalProducts: [...prev.additionalProducts, "Jeu pour les Couples non mariés"],
-                  orderDetails: `• Jeu pour les Mariés\n• Jeu pour les Couples non mariés (-10%)`
-                }));
-                await addBotResponse([{
-                  type: 'assistant',
-                  content: "Super ! Le jeu pour les Couples non mariés a bien été ajouté à votre commande avec une réduction de 10%. Vous profitez donc du Pack Duo ! Souhaitez-vous ajouter autre chose ?"
-                }, {
-                  type: 'user-choices',
-                  choices: [
-                    "Découvrir les autres jeux",
-                    "Finaliser la commande"
-                  ]
-                }]);
-                break;
-        
-              case "Ajouter le jeu pour la Famille":
-                setOrderData(prev => ({
-                  ...prev,
-                  additionalProducts: [...prev.additionalProducts, "Jeu pour la Famille"],
-                  orderDetails: `${prev.orderDetails}\n• Jeu pour la Famille`
-                }));
-                await addBotResponse([{
-                  type: 'assistant',
-                  content: "Super ! Le jeu pour la Famille a bien été ajouté à votre commande. Souhaitez-vous ajouter autre chose ?"
-                }, {
-                  type: 'user-choices',
-                  choices: [
-                    "Ajouter le jeu pour les Amis",
-                    "Finaliser la commande"
-                  ]
-                }]);
-                break;
-        
-              case "Ajouter le jeu pour les Amis":
-                setOrderData(prev => ({
-                  ...prev,
-                  additionalProducts: [...prev.additionalProducts, "Jeu pour les Amis"],
-                  orderDetails: `${prev.orderDetails}\n• Jeu pour les Amis`
-                }));
-                await addBotResponse([{
-                  type: 'assistant',
-                  content: "Parfait ! Le jeu pour les Amis a bien été ajouté à votre commande. Que souhaitez-vous faire ?"
-                }, {
-                  type: 'user-choices',
-                  choices: [
-                    "Finaliser la commande",
-                    "Voir les autres jeux"
-                  ]
-                }]);
-                break;
-        
-              case "Finaliser la commande":
-              case "Non merci, continuer ma commande":
-                setCheckoutStep('contactInfo');
-                await addBotResponse(checkoutFlow.contactInfo);
-                break;
-        
-              case "Voir les autres jeux":
-              case "Découvrir les autres jeux":
-                await addBotResponse(otherProducts);
-                break;
-        
-              case "Commander plusieurs jeux":
-                setCheckoutStep('quantity');
-                await addBotResponse([{
-                  type: 'assistant',
-                  content: "Excellent choix ! Combien d'exemplaires souhaitez-vous commander ?"
-                }, {
-                  type: 'user-choices',
-                  choices: ["2 exemplaires", "3 exemplaires", "4 exemplaires ou plus"]
-                }]);
-                break;
-        
-              case "Commander 1 jeu":
-                setOrderData(prev => ({
-                  ...prev,
-                  quantity: 1,
-                  orderDetails: `• Jeu pour les Mariés (1 exemplaire)`
-                }));
-                setCheckoutStep('contactInfo');
-                await addBotResponse(checkoutFlow.contactInfo);
-                break;
-        
-              case "Voir les packs":
-              case "Voir les packs disponibles":
-                await addBotResponse([{
-                  type: 'assistant',
-                  content: `Voici nos différents packs :
-        
-        - Pack Solo : 14 000 FCFA
-        - Pack Duo (-10%) : 25 200 FCFA
-        - Pack Trio (-15%) : 35 700 FCFA
-        - Pack Comité (-20%) : à partir de 4 jeux
-        
-        🎁 Bonus : -10% sur le jeu "Couples non mariés" en complément !
-        
-        La livraison est gratuite à Dakar. Dans les autres villes du Sénégal 🇸🇳 et à Abidjan 🇨🇮, elle est à 3000 FCFA.`
-                }, {
-                  type: 'user-choices',
-                  choices: [
-                    "Commander 1 jeu",
-                    "Commander plusieurs jeux",
-                    "Ajouter le jeu Couples"
-                  ]
-                }]);
-                break;
-        
-              case "Combien coûte-t-il ?":
-                await addBotResponse(botResponses[activeScenario.id]['prix']);
-                break;
-            }
-          }
-        // Gestion du scénario Yamo'o
-        else if (activeScenario.id === 'restaurant') {
+      default:
+        // Gestion du scénario par défaut, selon le scénario actif
+        if (activeScenario.id === 'viens-on-sconnait') {
+          // Gestion des choix pour ce scénario
           switch(choice) {
             case "Je veux en savoir plus":
-              await addBotResponse(botResponses[activeScenario.id]['infos']);
+              await addBotResponse(botResponses[activeScenario.id as keyof typeof botResponses]['infos']);
               break;
-      
-            case "Commander avec boisson":
-              await addBotResponse([{
-                type: 'assistant',
-                content: `Excellent choix ! Quelle boisson souhaitez-vous ajouter à votre commande ?
-      
-      - Bissap frais (2 000 FCFA)
-      - Gingembre frais (2 000 FCFA)
-      - Cocktail detox (2 500 FCFA)`
-              }, {
-                type: 'user-choices',
-                choices: [
-                  "Ajouter Bissap",
-                  "Ajouter Gingembre",
-                  "Ajouter Cocktail detox",
-                  "Continuer sans boisson"
-                ]
-              }]);
-              break;
-      
-            case "Commander sans boisson":
-              setCheckoutStep('quantity');
-              await addBotResponse([{
-                type: 'assistant',
-                content: "D'accord ! Combien de box souhaitez-vous commander ?"
-              }, {
-                type: 'user-choices',
-                choices: ["1 box", "2 box (-10%)", "3 box (-15%)", "Plus"]
-              }]);
-              break;
-      
-            case "Ajouter Bissap":
-            case "Ajouter Gingembre":
-            case "Ajouter Cocktail detox":
-              const drinkName = choice.split('Ajouter ')[1];
-              setOrderData(prev => ({
-                ...prev,
-                drinks: [...prev.drinks, drinkName],
-                orderDetails: prev.orderDetails ? `${prev.orderDetails}\n• ${drinkName}` : `• ${drinkName}`
-              }));
-              await addBotResponse([{
-                type: 'assistant',
-                content: `Parfait ! J'ai ajouté ${drinkName} à votre commande. Souhaitez-vous ajouter une autre boisson ?`
-              }, {
-                type: 'user-choices',
-                choices: [
-                  "Ajouter Bissap",
-                  "Ajouter Gingembre",
-                  "Ajouter Cocktail detox",
-                  "Passer à la commande"
-                ]
-              }]);
-              break;
-      
-            case "Passer à la commande":
-            case "Continuer sans boisson":
-              setCheckoutStep('quantity');
-              await addBotResponse([{
-                type: 'assistant',
-                content: "Très bien ! Combien de box souhaitez-vous commander ?"
-              }, {
-                type: 'user-choices',
-                choices: ["1 box", "2 box (-10%)", "3 box (-15%)", "Plus"]
-              }]);
-              break;
-      
             case "Je souhaite commander":
-            case "Commander maintenant":
-              setCheckoutStep('quantity');
-              await addBotResponse(restaurantFlow.quantity);
+              await handleStartOrder();
               break;
-      
-            case "Voir les boissons":
-            case "Voir les accompagnements":
-              await addBotResponse([{
-                type: 'assistant',
-                content: `Voici notre sélection de boissons fraîches maison 🥤
-      
-      - Bissap frais (2 000 FCFA)
-      - Gingembre frais (2 000 FCFA)
-      - Cocktail detox (2 500 FCFA)`
-              }, {
-                type: 'user-choices',
-                choices: [
-                  "Commander avec boisson",
-                  "Commander sans boisson",
-                  "Voir les prix"
-                ]
-              }]);
+            case "Combien coûte-t-il ?":
+              await addBotResponse(botResponses[activeScenario.id as keyof typeof botResponses]['prix']);
               break;
-      
-            case "Combien coûte-t-elle ?":
-            case "Voir les prix":
-              await addBotResponse(botResponses[activeScenario.id]['prix']);
+            default:
+              // Gestion des choix personnalisés
+              if (choice.includes("Voir les")) {
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: `Bien sûr, je vais vous montrer les ${choice.split("Voir les ")[1]}. Quelle information spécifique recherchez-vous ?`
+                }]);
+                setMessages(prev => [...prev, {
+                  type: 'user-choices',
+                  choices: [
+                    "Je souhaite commander",
+                    "En savoir plus"
+                  ]
+                }]);
+              } else {
+                await addBotResponse([{
+                  type: 'assistant',
+                  content: `Je comprends que vous souhaitez ${choice.toLowerCase()}. Comment puis-je vous aider davantage avec notre ${activeScenario.product.name} ?`
+                }]);
+                setMessages(prev => [...prev, {
+                  type: 'user-choices',
+                  choices: [
+                    "Je souhaite commander",
+                    "Plus d'infos"
+                  ]
+                }]);
+              }
               break;
           }
+        } else if (activeScenario.id === 'ecoboom') {
+          // Gestion des choix pour le scénario ecoboom
+          switch(choice) {
+            case "Je veux en savoir plus":
+              await addBotResponse(botResponses[activeScenario.id as keyof typeof botResponses]['infos']);
+              break;
+            case "Je souhaite commander":
+              await handleStartOrder();
+              break;
+            case "Voir les tailles et prix":
+            case "Combien coûte-t-elle ?":
+              await addBotResponse(botResponses[activeScenario.id as keyof typeof botResponses]['prix']);
+              break;
+            default:
+              await handleEcoboomFlow(choice);
+          }
+        } else if (activeScenario.id === 'amani') {
+          // Gestion des choix pour le scénario amani
+          switch(choice) {
+            case "Je veux en savoir plus":
+              await addBotResponse(botResponses[activeScenario.id as keyof typeof botResponses]['infos']);
+              break;
+            case "Je souhaite commander":
+            case "Commander maintenant":
+            case "Commander la ceinture seule":
+              await handleStartOrder();
+              break;
+            case "Voir les prix":
+            case "Combien coûte-t-elle ?":
+              await addBotResponse(botResponses[activeScenario.id as keyof typeof botResponses]['prix']);
+              break;
+            default:
+              await handleAmaniFlow(choice);
+          }
         }
-        // Gestion du scénario Othentic
-          else {
-            if (choice.includes("Choisir Ensemble") || choice === "Choisir Duo Élégant") {
-              setOrderData(prev => ({
-              ...prev,
-              accessories: choice === "Choisir Ensemble Complet" 
-                ? ["Sac", "Écharpe"]
-                : choice === "Choisir Ensemble Essentiel"
-                ? ["Sac"]
-                : choice === "Choisir Duo Élégant"
-                ? ["Écharpe"]
-                : ["Écharpe"], // cas par défaut
-              orderDetails: choice === "Choisir Duo Élégant"
-                ? "• Duo Élégant (Robe + Écharpe)"
-                : `• Ensemble ${choice.split("Choisir ")[1]}`
-              }));
-               setCheckoutStep('size');
-                await addBotResponse(shopModeFlow.size);
-              }
-          else if (choice === "Commander la robe seule") {
-              setCheckoutStep('size');
-          await addBotResponse(shopModeFlow.size);
-              }
-          else if (choice === "Je veux en savoir plus") {
-          await addBotResponse(botResponses[activeScenario.id]['infos']);
-              }
-          else if (choice.includes("Combien coûte") || choice === "Voir les prix") {
-          await addBotResponse(botResponses[activeScenario.id]['prix']);
-              }
-          else if (choice === "Voir les ensembles" || choice === "Choisir un ensemble") {
-          await handleShopModeFlow("Voir les ensembles");
-              }
-          else if (choice.toLowerCase().includes("commander") || choice === "Je souhaite commander") {
-          await handleStartOrder();
-              }
-        }
-      break;
+        break;
     }
   };
 
@@ -921,14 +932,11 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
               Une expérience d'achat naturelle
             </GradientTitle>
           </div>
-          <div className="flex flex-col lg:flex-row gap-8 items-stretch min-h-[600px]">
-            <div className="w-full lg:w-3/5 flex flex-col">
-              <div className="h-[600px] bg-gray-50 animate-pulse rounded-lg flex items-center justify-center text-gray-500">
+          <div className="flex flex-col lg:flex-row gap-8 items-center justify-center min-h-[600px]">
+            <div className="w-full md:w-auto flex justify-center">
+              <div className="h-[600px] w-[350px] bg-gray-50 animate-pulse rounded-[40px] flex items-center justify-center text-gray-500">
                 Chargement de l'interface...
               </div>
-            </div>
-            <div className="w-full lg:w-2/5">
-              <div className="h-[600px] bg-gray-50 animate-pulse rounded-lg"></div>
             </div>
           </div>
         </div>
@@ -939,33 +947,168 @@ La livraison est offerte sur tous les ensembles ! Que souhaitez-vous ?`
   return (
     <section className="py-24 bg-gradient-to-b from-white to-gray-50" id="demo">
       <div className="container mx-auto px-4">
-        <div className="mb-16 text-center">
+        <div className="mb-12 text-center">
           <GradientTitle subtitle="De la découverte au paiement, tout se passe dans la conversation.">
             Une expérience d'achat naturelle
           </GradientTitle>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-stretch min-h-[600px]">
-          <div className="w-full lg:w-3/5 flex flex-col">
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden ring-1 ring-gray-200">
-              <ScenarioSelector 
-                scenarios={scenarios}
-                activeScenario={activeScenario}
-                onSelect={handleScenarioChange}
-              />
-              <ChatInterface
-                messages={messages}
-                isTyping={isTyping}
-                showCheckout={showCheckout}
-                onUserChoice={handleUserChoice}
-                chatRef={chatRef}
-                scenario={activeScenario}
-                totalAmount={calculateTotal()}
-              />
-            </div>
+        <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
+          {/* Colonne d'informations et CTA - maintenant à gauche */}
+          <div className="w-full md:w-2/5 lg:w-1/3 space-y-6">
+            {/* Features animées */}
+            <motion.div 
+              className="bg-white rounded-xl shadow-md p-6 overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <h3 className="text-xl font-bold mb-4 text-gray-900">Pourquoi vos clients vont l'adorer</h3>
+              
+              <div className="space-y-6 relative min-h-[120px]">
+                {features.map((feature, index) => {
+                  const Icon = feature.icon;
+                  return (
+                    <motion.div
+                      key={index}
+                      className={`absolute inset-0 transition-all duration-500 ease-in-out ${
+                        activeFeatureIndex === index ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10 pointer-events-none'
+                      }`}
+                    >
+                      <div className="flex gap-4 items-start">
+                        <div className="w-12 h-12 rounded-full bg-dukka-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-6 h-6 text-dukka-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold mb-1">{feature.title}</h4>
+                          <p className="text-gray-600 text-sm">{feature.description}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+              
+              {/* Indicateurs de navigation */}
+              <div className="flex justify-center mt-6 gap-2">
+                {features.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      i === activeFeatureIndex ? 'bg-dukka-primary w-6' : 'bg-gray-300'
+                    }`}
+                    onClick={() => setActiveFeatureIndex(i)}
+                  />
+                ))}
+              </div>
+            </motion.div>
+            
+            {/* Statistiques */}
+            <motion.div 
+              className="bg-gradient-to-br from-dukka-primary/5 to-dukka-primary/20 rounded-xl p-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <h3 className="text-lg font-semibold mb-4 text-gray-900">Résultats des marchands avec Dukka :</h3>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-white rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-dukka-primary">+45%</div>
+                  <div className="text-xs text-gray-600">ventes en plus</div>
+                </div>
+                <div className="bg-white rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-dukka-primary">60%</div>
+                  <div className="text-xs text-gray-600">temps gagné</div>
+                </div>
+                <div className="bg-white rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold text-dukka-primary">75%</div>
+                  <div className="text-xs text-gray-600">clients en plus</div>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* CTA */}
+            <motion.div 
+              className="bg-dukka-primary text-white rounded-xl p-6 text-center shadow-lg"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <h3 className="text-xl font-bold mb-3">Prêt à rejoindre Dukka ?</h3>
+              <p className="mb-6 text-white/90">Adoptez l'e-commerce conversationnelle et offrez à vos clients la meilleure expérience d'achat en ligne.</p>
+              <WaitlistButton variant="secondary" className="w-full justify-center" />
+            </motion.div>
           </div>
-
-          <FeatureList features={features} />
+          
+          {/* Smartphone avec interface de chat - maintenant à droite */}
+          <div className="w-full md:w-auto">
+            <motion.div 
+              className="relative mx-auto w-[350px] h-[712px]"
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Cadre smartphone */}
+              <div className="absolute inset-0 bg-gray-900 rounded-[40px] shadow-xl overflow-hidden">
+                {/* Barre du haut avec notch */}
+                <div className="absolute top-0 left-0 right-0 h-6 bg-black z-10">
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-black rounded-b-xl"></div>
+                </div>
+                
+                {/* Écran du smartphone */}
+                <div className="absolute top-0 left-0 right-0 bottom-0 bg-white rounded-[38px] overflow-hidden m-[4px]">
+                  {/* Barre de statut */}
+                  <div className="h-12 bg-dukka-primary text-white flex items-center justify-between px-6 pt-6">
+                    <div className="text-xs font-medium">9:41</div>
+                    <div className="flex items-center space-x-1">
+                      <div className="h-2 w-2 rounded-full bg-white opacity-70"></div>
+                      <div className="h-2 w-2 rounded-full bg-white opacity-80"></div>
+                      <div className="h-2 w-2 rounded-full bg-white opacity-90"></div>
+                      <div className="h-2 w-2 rounded-full bg-white"></div>
+                    </div>
+                    <div className="text-xs font-medium">100%</div>
+                  </div>
+                  
+                  {/* Sélecteur de scénario */}
+                  <div className="h-14 flex items-center justify-between px-4 pt-6 pb-2 bg-white border-b border-gray-100">
+                    <div className="flex overflow-x-auto gap-2 no-scrollbar">
+                      {scenarios.map((scenario) => (
+                        <button
+                          key={scenario.id}
+                          onClick={() => handleScenarioChange(scenario)}
+                          className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
+                            activeScenario.id === scenario.id
+                              ? 'bg-dukka-primary text-white'
+                              : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                          }`}
+                        >
+                          {scenario.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Interface de chat */}
+                  <div className="h-[550px]">
+                    <ChatInterface
+                      messages={messages}
+                      isTyping={isTyping}
+                      showCheckout={showCheckout}
+                      onUserChoice={handleUserChoice}
+                      onAiResponse={handleAiResponse}
+                      chatRef={chatRef}
+                      scenario={activeScenario}
+                      totalAmount={calculateTotal()}
+                      inCheckoutFlow={inCheckoutFlow}
+                    />
+                  </div>
+                  
+                  {/* "Home bar" du smartphone */}
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-300 rounded-full"></div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

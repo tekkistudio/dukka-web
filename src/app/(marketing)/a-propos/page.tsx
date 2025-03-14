@@ -86,7 +86,7 @@ export default function AboutPage() {
                 <span className="text-dukka-primary text-xl font-semibold">Notre Mission</span>
               </div>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Notre mission est de réinventer l'e-commerce pour l'adapter à la réalité africaine. Dukka permet aux commerçants et marques de créer des boutiques en ligne où l'expérience d'achat est conversationnelle, facilitée par un chatbot IA qui reproduit l'interaction naturelle d'un marché physique. Les solutions de paiement locales (Wave, Orange Money, etc.) sont intégrées et le paiement se fait naturellement dans le flux de la conversation, comme dans une discussion sur WhatsApp.
+                Notre mission est de réinventer l'e-commerce pour l'adapter à la réalité africaine. Dukka permet aux marques et commerçants de créer des boutiques en ligne où l'expérience d'achat est conversationnelle, facilitée par un chatbot IA qui reproduit l'interaction naturelle d'une boutique physique. Les solutions de paiement locales (Wave, Orange Money, etc.) sont intégrées et le paiement se fait naturellement dans le flux de la conversation, comme dans une discussion sur WhatsApp.
               </p>
             </div>
           </div>

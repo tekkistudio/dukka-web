@@ -1,3 +1,4 @@
+// src/components/layout/Navbar.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -8,9 +9,9 @@ import { usePathname } from 'next/navigation'
 
 const navigation = [
   { name: 'Accueil', href: '/' },
-  { name: 'Fonctionnalités', href: '/fonctionnalites' },
-  { name: 'Pourquoi Dukka', href: '/pourquoi-dukka' },
-  { name: 'À propos', href: '/a-propos' },
+  { name: 'Fonctionnalités', href: '/#features' },
+  { name: 'Pourquoi Dukka', href: '/#comparison' },
+  { name: 'FAQ', href: '/#faq' },
 ]
 
 interface NavbarProps {
@@ -22,6 +23,25 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
   const isHome = pathname === '/'
+
+  // Fonction pour vérifier si un lien est actif
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    
+    // Pour les liens de section, on considère qu'ils sont actifs si
+    // on est sur la page d'accueil et le hash correspond
+    if (href.startsWith('/#')) {
+      const hash = href.substring(1); // Enlever le "/" initial
+      
+      // Si on regarde l'URL directement
+      if (pathname === '/' && window.location.hash === hash) return true;
+      
+      // Si on est juste sur la page d'accueil sans hash, aucun des liens de section n'est actif
+      return false;
+    }
+    
+    return false;
+  };
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
@@ -36,6 +56,26 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
   }, [mobileMenuOpen])
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Si on est déjà sur la page d'accueil et que le lien est une section
+    if (isHome && href.includes('#')) {
+      e.preventDefault();
+      
+      // Fermer le menu mobile si ouvert
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+      
+      // Extraire l'ID de la section depuis le href (ex: "/#features" → "features")
+      const sectionId = href.split('#')[1];
+      const section = document.getElementById(sectionId);
+      
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
 
   return (
     <header 
@@ -75,8 +115,9 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
               <a
                 key={item.name}
                 href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
                 className={`text-base font-medium transition-colors ${
-                  pathname === item.href
+                  isActive(item.href)
                     ? 'text-dukka-primary'
                     : 'text-black hover:text-dukka-primary'
                 }`}
@@ -147,8 +188,9 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
               <a
                 key={item.name}
                 href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
                 className={`block px-4 py-3 text-base font-medium rounded-lg transition-colors ${
-                  pathname === item.href
+                  isActive(item.href)
                     ? 'bg-dukka-primary/10 text-dukka-primary'
                     : 'text-gray-900 hover:bg-gray-50 hover:text-dukka-primary'
                 }`}

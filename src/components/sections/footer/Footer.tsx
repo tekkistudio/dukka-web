@@ -1,3 +1,4 @@
+// src/components/sections/footer/Footer.tsx
 'use client'
 
 import { FooterContent } from './FooterContent'
