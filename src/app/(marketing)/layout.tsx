@@ -1,45 +1,53 @@
 // src/app/(marketing)/layout.tsx
 'use client';
-// src/app/(marketing)/layout.tsx
-import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
 
-// Chargement dynamique du layout principal
-const MainLayout = dynamic(
-  () => import('@/components/layout/MainLayout'),
-  { loading: () => <LoadingLayout /> }
-);
-
-// Composant de chargement simple pour le layout
-function LoadingLayout({ children }: { children?: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Header placeholder */}
-      <div className="h-16 bg-gray-50 animate-pulse"></div>
-      
-      {/* Contenu principal */}
-      <main>
-        {children || (
-          <div className="min-h-[80vh] flex items-center justify-center">
-            <div className="w-16 h-16 border-4 border-dukka-primary border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        )}
-      </main>
-      
-      {/* Footer placeholder */}
-      <div className="h-16 bg-gray-50 animate-pulse"></div>
-    </div>
-  );
-}
+import React, { useEffect, useState } from 'react';
 
 export default function MarketingLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Afficher un écran de chargement jusqu'à ce que le composant soit monté côté client
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement de Dukka...</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
-    <Suspense fallback={<LoadingLayout />}>
-      <MainLayout>{children}</MainLayout>
-    </Suspense>
+    <div>
+      {/* En-tête simplifié */}
+      <header className="bg-white shadow-sm py-4 px-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <a href="/" className="text-2xl font-bold text-blue-600">Dukka</a>
+          <nav className="hidden md:flex gap-6">
+            <a href="/fonctionnalites" className="text-gray-700 hover:text-blue-600">Fonctionnalités</a>
+            <a href="/a-propos" className="text-gray-700 hover:text-blue-600">À propos</a>
+            <a href="/contact" className="text-gray-700 hover:text-blue-600">Contact</a>
+          </nav>
+          <a 
+            href="/waitlist" 
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            Liste d&apos;attente
+          </a>
+        </div>
+      </header>
+      
+      {/* Contenu principal */}
+      {children}
+    </div>
   );
 }

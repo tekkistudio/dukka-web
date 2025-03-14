@@ -7,32 +7,39 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  reactStrictMode: true,
   
-  // Configuration critique pour éviter les erreurs de window
-  output: 'export',  // Génération statique sans SSR
+  // Configuration pour désactiver le prérendu statique
+  staticPageGenerationTimeout: 1000, // Timeout court pour éviter les longs prérendus
   
-  // Désactiver le prérendu pour certaines pages/routes
+  // Configuration expérimentale
   experimental: {
-    // Passage en statique sans prérendu côté serveur
-    appDir: true,
+    // Optimisations pour le chargement côté client
+    optimizeCss: true,
+    
+    // Désactiver les routes statiques problématiques
+    disableOptimizedLoading: true,
+    
+    // Désactiver les fonctionnalités serveur
     serverActions: false,
   },
   
-  // Spécifier les routes qui doivent être générées côté client uniquement
-  exportPathMap: async function() {
-    return {
-      '/': { page: '/' }
-    };
-  },
-  
-  // Cette option est cruciale pour éviter les erreurs window
+  // Règles pour les images
   images: {
-    unoptimized: true  // Nécessaire en mode export
+    domains: ['images.unsplash.com'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    formats: ['image/webp'],
   },
   
-  // Nécessaire pour le mode export
-  trailingSlash: true
-}
+  // Passer à true si vous avez des problèmes avec le prérendu de certaines pages
+  skipTrailingSlashRedirect: true,
+  
+  // On indique à Next.js d'ignorer certaines erreurs pendant la génération
+  onDemandEntries: {
+    // period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 25 * 1000,
+    // number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 2,
+  }
+};
 
 export default nextConfig;
