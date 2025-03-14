@@ -2,19 +2,37 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    // Désactive la vérification ESLint pendant le build
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Désactive aussi les vérifications TypeScript pendant le build
     ignoreBuildErrors: true,
   },
-  // Ajouter cette option pour gérer les composants côté client et serveur
   reactStrictMode: true,
+  
+  // Configuration critique pour éviter les erreurs de window
+  output: 'export',  // Génération statique sans SSR
+  
+  // Désactiver le prérendu pour certaines pages/routes
   experimental: {
-    // S'assurer que Next.js est conscient de la façon dont les composants client/serveur interagissent
-    esmExternals: true
-  }
+    // Passage en statique sans prérendu côté serveur
+    appDir: true,
+    serverActions: false,
+  },
+  
+  // Spécifier les routes qui doivent être générées côté client uniquement
+  exportPathMap: async function() {
+    return {
+      '/': { page: '/' }
+    };
+  },
+  
+  // Cette option est cruciale pour éviter les erreurs window
+  images: {
+    unoptimized: true  // Nécessaire en mode export
+  },
+  
+  // Nécessaire pour le mode export
+  trailingSlash: true
 }
 
 export default nextConfig;
