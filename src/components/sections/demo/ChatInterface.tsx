@@ -1,5 +1,6 @@
 // src/components/sections/demo/ChatInterface.tsx
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { isBrowser } from '@/utils/browser';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Send, Mic } from 'lucide-react';
@@ -48,6 +49,9 @@ export function ChatInterface({
   // Détecter si l'IA est activée en vérifiant si les clés API sont présentes
   useEffect(() => {
     const checkAiAvailability = async () => {
+      // Ne pas exécuter côté serveur
+      if (!isBrowser()) return;
+      
       try {
         const response = await fetch('/api/ai/status');
         if (response.ok) {
