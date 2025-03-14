@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 import { WaitlistButton } from '@/components/WaitlistButton'
 import { usePathname } from 'next/navigation'
+import { isBrowser, safeScrollToElement } from '@/utils/browser'
 
 const navigation = [
   { name: 'Accueil', href: '/' },
@@ -33,10 +34,11 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
     if (href.startsWith('/#')) {
       const hash = href.substring(1); // Enlever le "/" initial
       
-      // Si on regarde l'URL directement
-      if (pathname === '/' && window.location.hash === hash) return true;
-      
       // Si on est juste sur la page d'accueil sans hash, aucun des liens de section n'est actif
+      if (pathname === '/' && isBrowser()) {
+        return window.location.hash === hash;
+      }
+      
       return false;
     }
     
@@ -44,17 +46,21 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
   };
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    if (isBrowser()) {
+      const handleScroll = () => setIsScrolled(window.scrollY > 50);
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname])
 
   useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
+    if (isBrowser()) {
+      document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    }
   }, [mobileMenuOpen])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -69,11 +75,7 @@ export function Navbar({ showAnnouncement }: NavbarProps) {
       
       // Extraire l'ID de la section depuis le href (ex: "/#features" → "features")
       const sectionId = href.split('#')[1];
-      const section = document.getElementById(sectionId);
-      
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
+      safeScrollToElement(sectionId);
     }
   };
 

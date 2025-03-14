@@ -11,8 +11,16 @@ const DashboardCharts = dynamic(
   { ssr: false }
 )
 
+// Type d'état avec error qui peut être null ou string
+interface StatsState {
+  waitlistCount: number;
+  messagesCount: number;
+  loading: boolean;
+  error: null | string; // Permettre les deux types
+}
+
 export default function DashboardStats() {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<StatsState>({
     waitlistCount: 0,
     messagesCount: 0,
     loading: true,

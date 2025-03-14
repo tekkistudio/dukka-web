@@ -25,3 +25,24 @@ export const isBrowser = (): boolean => {
     }
     return defaultValue;
   }
+  
+  /**
+   * Utilitaire pour obtenir le hash de l'URL en toute sécurité
+   * Retourne une chaîne vide si exécuté côté serveur
+   */
+  export function getWindowHash(): string {
+    return safeWindow(() => window.location.hash, '');
+  }
+  
+  /**
+   * Utilitaire pour effectuer un défilement vers un élément en toute sécurité
+   * Ne fait rien si exécuté côté serveur
+   */
+  export function safeScrollToElement(elementId: string, behavior: ScrollBehavior = 'smooth'): void {
+    if (isBrowser()) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.scrollIntoView({ behavior });
+      }
+    }
+  }

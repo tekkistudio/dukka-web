@@ -6,6 +6,9 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react'
 
+// Définir un type pour le statut avec des valeurs spécifiques
+type MessageStatus = 'new' | 'in_progress' | 'done';
+
 interface Message {
   id: string
   created_at: string
@@ -14,7 +17,9 @@ interface Message {
   visitor_type: string
   subject: string
   message: string
-  status: 'new' | 'in_progress' | 'done'
+  status: MessageStatus // Type spécifique au lieu de string
+  phone?: string
+  attachments?: string[] | null
 }
 
 export default function ContactMessages() {
@@ -38,7 +43,16 @@ export default function ContactMessages() {
 
       if (error) throw error
 
-      setMessages(data)
+      // Vérifier si chaque message a un statut valide, sinon utiliser 'new' par défaut
+      const validatedMessages = (data || []).map(msg => ({
+        ...msg,
+        // Assurez-vous que status est l'une des valeurs autorisées
+        status: (msg.status === 'new' || msg.status === 'in_progress' || msg.status === 'done') 
+          ? msg.status as MessageStatus 
+          : 'new'
+      })) as Message[];
+
+      setMessages(validatedMessages)
       setError(null)
     } catch (error) {
       console.error('Erreur lors de la récupération des messages:', error)
@@ -48,7 +62,7 @@ export default function ContactMessages() {
     }
   }
 
-  const updateMessageStatus = async (messageId: string, newStatus: string) => {
+  const updateMessageStatus = async (messageId: string, newStatus: MessageStatus) => {
     try {
       const { error } = await supabase
         .from('contact_messages')
@@ -65,7 +79,7 @@ export default function ContactMessages() {
     }
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: MessageStatus) => {
     switch (status) {
       case 'new':
         return 'bg-blue-100 text-blue-800'
@@ -78,7 +92,7 @@ export default function ContactMessages() {
     }
   }
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: MessageStatus) => {
     switch (status) {
       case 'new':
         return 'Nouveau'
@@ -200,7 +214,7 @@ export default function ContactMessages() {
                 <span className="text-sm text-gray-500">Statut:</span>
                 <select
                   value={message.status}
-                  onChange={(e) => updateMessageStatus(message.id, e.target.value)}
+                  onChange={(e) => updateMessageStatus(message.id, e.target.value as MessageStatus)}
                   className="text-sm border-gray-300 rounded-md focus:ring-dukka-primary focus:border-dukka-primary"
                 >
                   <option value="new">Nouveau</option>
@@ -215,7 +229,7 @@ export default function ContactMessages() {
 
       {filteredMessages.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          Aucun message {statusFilter !== 'all' ? `avec le statut "${getStatusLabel(statusFilter)}"` : ''}
+          Aucun message {statusFilter !== 'all' ? `avec le statut "${getStatusLabel(statusFilter as MessageStatus)}"` : ''}
         </div>
       )}
     </div>

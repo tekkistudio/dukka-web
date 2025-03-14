@@ -1,3 +1,4 @@
+// src/components/sections/contact/ContactChat.tsx
 'use client'
 
 import React, { useState, useRef } from 'react';
@@ -12,7 +13,15 @@ import {
   AVAILABLE_POSITIONS 
 } from './data/contact_data';
 
+// Types définis pour une meilleure sécurité de typage
 type VisitorType = 'e-commerçant(e)' | 'commerçant(e)' | 'marque' | 'média' | 'équipe' | 'autre';
+
+// Modification du type MessageType pour rendre content optionnel
+type MessageType = {
+  type: string;
+  content?: string; // content est maintenant optionnel
+  choices?: string[];
+};
 
 interface ContactFormData {
   fullName: string;
@@ -62,8 +71,6 @@ async function handleFileUpload(file: File) {
 
 async function saveContactMessage(formData: ContactFormData) {
   try {
-    console.log('Tentative de sauvegarde avec les données :', formData);
-
     const insertData = {
       full_name: formData.fullName,
       email: formData.email,
@@ -76,21 +83,16 @@ async function saveContactMessage(formData: ContactFormData) {
       status: 'new' 
     };
 
-    console.log('Données formatées pour insert :', insertData);
-
     const { data, error } = await supabase
       .from('contact_messages')
       .insert([insertData])
       .select(); 
 
     if (error) {
-      console.error('Détails de l\'erreur Supabase:', error);
       throw new Error(`Erreur Supabase: ${error.message}`);
     }
 
-    console.log('Données sauvegardées avec succès:', data);
     return data;
-
   } catch (error) {
     console.error('Erreur complète:', error);
     throw error;
@@ -116,7 +118,7 @@ async function saveToWaitlist(formData: ContactFormData) {
 }
 
 export function ContactChat() {
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<MessageType[]>(INITIAL_MESSAGES);
   const [formData, setFormData] = useState<ContactFormData>({
     fullName: '',
     email: '',
@@ -136,14 +138,14 @@ export function ContactChat() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Gestion des messages
-  const addMessage = async (content: string | Message, isUser = true) => {
+  const addMessage = async (content: string | MessageType, isUser = true) => {
     if (typeof content === 'string') {
       setMessages(prev => [...prev, {
         type: isUser ? 'user' : 'assistant',
         content
       }]);
     } else {
-      setMessages(prev => [...prev, content]);
+      setMessages(prev => [...prev, content as MessageType]);
     }
 
     if (chatRef.current) {
@@ -192,7 +194,7 @@ export function ContactChat() {
 
   // Gestion des profils
   const handleProfileSelection = async (profile: string) => {
-    let visitorType: VisitorType;
+    let visitorType: string;
     
     switch(profile) {
       case "Je suis e-commerçant(e)":
@@ -227,8 +229,11 @@ export function ContactChat() {
         ]
       );
     } else {
+      const presentation = PERSONALIZED_PRESENTATIONS[visitorType as keyof typeof PERSONALIZED_PRESENTATIONS] || 
+                          PERSONALIZED_PRESENTATIONS.autre;
+      
       await addBotResponse(
-        [PERSONALIZED_PRESENTATIONS[visitorType], "Que puis-je faire d'autre pour vous ?"],
+        [presentation, "Que puis-je faire d'autre pour vous ?"],
         ["Je veux en savoir plus sur Dukka", "Je veux contacter l'équipe"]
       );
     }
@@ -240,17 +245,20 @@ export function ContactChat() {
       case "Je veux en savoir plus sur Dukka":
         await addMessage(choice);
         if (formData.visitorType) {
-        await addBotResponse(
-          [PERSONALIZED_PRESENTATIONS[formData.visitorType as VisitorType], "Que puis-je faire d'autre pour vous ?"],
-          ["Je veux contacter l'équipe", "Je veux rejoindre la liste d'attente"]
-        );
-      } else {
-        await addBotResponse(
-      [PERSONALIZED_PRESENTATIONS["autre"], "Que puis-je faire d'autre pour vous ?"],
-      ["Je veux contacter l'équipe", "Je veux rejoindre la liste d'attente"]
-    );
-  }
-  break;
+          const visitorTypeKey = formData.visitorType as keyof typeof PERSONALIZED_PRESENTATIONS;
+          const presentation = PERSONALIZED_PRESENTATIONS[visitorTypeKey] || PERSONALIZED_PRESENTATIONS.autre;
+          
+          await addBotResponse(
+            [presentation, "Que puis-je faire d'autre pour vous ?"],
+            ["Je veux contacter l'équipe", "Je veux rejoindre la liste d'attente"]
+          );
+        } else {
+          await addBotResponse(
+            [PERSONALIZED_PRESENTATIONS.autre, "Que puis-je faire d'autre pour vous ?"],
+            ["Je veux contacter l'équipe", "Je veux rejoindre la liste d'attente"]
+          );
+        }
+        break;
 
       case "Je veux voir les postes disponibles":
         await addMessage(choice);
@@ -319,32 +327,31 @@ export function ContactChat() {
         await addBotResponse(["Maintenant, vous pouvez écrire votre message. N'hésitez pas à être aussi détaillé que possible ! Vous pouvez ajouter un fichier de 2 Mo max en cliquant sur le bouton 'upload' ci-dessous."]);
         break;
   
-        case 'message':
-          try {
-            const updatedFormData = { 
-              ...formData, 
-              message: text,
-              status: 'new' 
-            };
+      case 'message':
+        try {
+          const finalFormData = { 
+            ...formData, 
+            message: text,
+          };
     
-            await saveContactMessage(updatedFormData);
+          await saveContactMessage(finalFormData);
     
-            await addBotResponse([
-              "✅ Votre message a été envoyé avec succès !",
-              "Notre équipe vous répondra dans les plus brefs délais.",
-              "Souhaitez-vous autre chose ?"
-            ], ["Je veux rejoindre la liste d'attente", "Non, merci !"]);
+          await addBotResponse([
+            "✅ Votre message a été envoyé avec succès !",
+            "Notre équipe vous répondra dans les plus brefs délais.",
+            "Souhaitez-vous autre chose ?"
+          ], ["Je veux rejoindre la liste d'attente", "Non, merci !"]);
     
-            setIsCollectingInfo(false);
-            setInfoStep('');
-          } catch (error) {
-            console.error('Erreur détaillée:', error); // Pour le debug uniquement
-            await addBotResponse([
-              "Désolé, une erreur est survenue lors de l'envoi du message.",
-              "Veuillez réessayer plus tard."
-            ]);
-          }
-          break;
+          setIsCollectingInfo(false);
+          setInfoStep('');
+        } catch (error) {
+          console.error('Erreur détaillée:', error);
+          await addBotResponse([
+            "Désolé, une erreur est survenue lors de l'envoi du message.",
+            "Veuillez réessayer plus tard."
+          ]);
+        }
+        break;
     }
   };
 
@@ -355,7 +362,10 @@ export function ContactChat() {
       return;
     }
 
-    if (INITIAL_MESSAGES[1].choices.includes(userResponse)) {
+    // Vérifier si le choix est dans les choix initiaux
+    if (INITIAL_MESSAGES.length > 1 && 
+        'choices' in INITIAL_MESSAGES[1] && 
+        INITIAL_MESSAGES[1].choices?.includes(userResponse)) {
       await handleProfileSelection(userResponse);
       return;
     }
@@ -374,10 +384,20 @@ export function ContactChat() {
 
     switch (userResponse) {
       case "Je veux en savoir plus sur Dukka":
-        await addBotResponse(
-          [PERSONALIZED_PRESENTATIONS[formData.visitorType], "Que puis-je faire d'autre pour vous ?"],
-          ["Je veux contacter l'équipe", "Je veux rejoindre la liste d'attente"]
-        );
+        if (formData.visitorType) {
+          const visitorTypeKey = formData.visitorType as keyof typeof PERSONALIZED_PRESENTATIONS;
+          const presentation = PERSONALIZED_PRESENTATIONS[visitorTypeKey] || PERSONALIZED_PRESENTATIONS.autre;
+          
+          await addBotResponse(
+            [presentation, "Que puis-je faire d'autre pour vous ?"],
+            ["Je veux contacter l'équipe", "Je veux rejoindre la liste d'attente"]
+          );
+        } else {
+          await addBotResponse(
+            [PERSONALIZED_PRESENTATIONS.autre, "Que puis-je faire d'autre pour vous ?"],
+            ["Je veux contacter l'équipe", "Je veux rejoindre la liste d'attente"]
+          );
+        }
         break;
 
       case "Je veux contacter l'équipe":
@@ -462,7 +482,7 @@ export function ContactChat() {
                 key={`choices-${index}`}
                 className="flex flex-wrap gap-2 w-full"
               >
-                {message.choices.map((choice, choiceIndex) => (
+                {message.choices?.map((choice, choiceIndex) => (
                   <motion.button
                     key={`${choice}-${choiceIndex}`}
                     onClick={() => handleNextStep(choice)}
@@ -488,7 +508,10 @@ export function ContactChat() {
               transition={{ duration: 0.2 }}
             >
               <ChatMessage
-                message={message}
+                message={{
+                  content: message.content || '', // Utiliser une chaîne vide si content est undefined
+                  type: message.type,
+                }}
                 isBot={message.type === 'assistant'}
                 scenario={{ chatbotName: 'Dukka', id: 'contact' }}
                 animate={false}

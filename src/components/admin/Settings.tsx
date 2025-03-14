@@ -1,11 +1,20 @@
+// src/components/admin/Settings.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { User } from 'lucide-react'
 
+// Définir le type pour le profil utilisateur
+interface UserProfile {
+  id?: string;
+  email?: string;
+  role?: string;
+  // Ajouter d'autres propriétés du profil si nécessaire
+}
+
 export default function Settings() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

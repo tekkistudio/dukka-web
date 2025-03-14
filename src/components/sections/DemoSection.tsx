@@ -16,8 +16,10 @@ import {
   ecoboomFlow 
 } from './demo/data'
 import { WaitlistButton } from '@/components/WaitlistButton'
+import { isBrowser } from '@/utils/browser'
+import ClientOnly from '@/components/client/ClientOnly'
 
-// Chargement dynamique des composants
+// Chargement dynamique des composants interactifs côté client uniquement
 const ChatInterface = dynamic(
   () => import('@/components/sections/demo/ChatInterface').then(mod => mod.ChatInterface),
   { 
@@ -31,7 +33,7 @@ const ChatInterface = dynamic(
 )
 
 const ScenarioSelector = dynamic(
-  () => import('@/components/sections/demo/ScenarioSelector').then(mod => mod.ScenarioSelector),
+  () => import('@/components/sections/demo/ScenarioSelector'),
   { ssr: false }
 )
 
@@ -82,8 +84,10 @@ export function DemoSection() {
     orderDetails: ''
   })
 
-  // Cycle automatique à travers les fonctionnalités
+  // Cycle automatique à travers les fonctionnalités - seulement côté client
   useEffect(() => {
+    if (!isBrowser()) return;
+    
     const interval = setInterval(() => {
       setActiveFeatureIndex(prev => (prev + 1) % features.length);
     }, 5000);
@@ -462,7 +466,7 @@ export function DemoSection() {
 4️⃣ Sélectionnez le niveau de chaleur souhaité (4 intensités)
 5️⃣ Activez le mode massage vibrant si désiré (4 modes de vibration)
 
-La chaleur diffusée pénètre profondément pour détendre les muscles et soulager les crampes. Vous pouvez porter Mia discrètement sous vos vêtements, à la maison, au bureau, à l'école ou lors de vos déplacements.`
+La chaleur diffusée pénètre profondément pour détendre les muscles et soulager les crampes. Vous pouvez porter Mia discrètement sous vos vêtements, afin de vous accompagner en toute sérénité tout au long de la journée, durant votre période du mois.`
       }, {
         type: 'user-choices',
         choices: [
@@ -760,7 +764,7 @@ Sans engagement, annulable à tout moment.`
     setCheckoutStep('');
   };
 
-  // Fonction améliorée pour gérer les entrées texte avec IA
+  // Gestion de la saisie de message
   const handleTextInput = async (text: string) => {
     const textLower = text.toLowerCase();
     
@@ -923,6 +927,7 @@ Sans engagement, annulable à tout moment.`
     }
   };
 
+  // Rendu du composant modifié pour prévenir les erreurs SSR
   if (!isMounted) {
     return (
       <section className="py-24 bg-gradient-to-b from-white to-gray-50" id="demo">
@@ -953,163 +958,165 @@ Sans engagement, annulable à tout moment.`
           </GradientTitle>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
-          {/* Colonne d'informations et CTA - maintenant à gauche */}
-          <div className="w-full md:w-2/5 lg:w-1/3 space-y-6">
-            {/* Features animées */}
-            <motion.div 
-              className="bg-white rounded-xl shadow-md p-6 overflow-hidden"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Pourquoi vos clients vont l'adorer</h3>
-              
-              <div className="space-y-6 relative min-h-[120px]">
-                {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  return (
-                    <motion.div
-                      key={index}
-                      className={`absolute inset-0 transition-all duration-500 ease-in-out ${
-                        activeFeatureIndex === index ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10 pointer-events-none'
-                      }`}
-                    >
-                      <div className="flex gap-4 items-start">
-                        <div className="w-12 h-12 rounded-full bg-dukka-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-6 h-6 text-dukka-primary" />
+        <ClientOnly>
+          <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
+            {/* Colonne d'informations et CTA - maintenant à gauche */}
+            <div className="w-full md:w-2/5 lg:w-1/3 space-y-6">
+              {/* Features animées */}
+              <motion.div 
+                className="bg-white rounded-xl shadow-md p-6 overflow-hidden"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <h3 className="text-xl font-bold mb-4 text-gray-900">Pourquoi vos clients vont l'adorer</h3>
+                
+                <div className="space-y-6 relative min-h-[120px]">
+                  {features.map((feature, index) => {
+                    const Icon = feature.icon;
+                    return (
+                      <motion.div
+                        key={index}
+                        className={`absolute inset-0 transition-all duration-500 ease-in-out ${
+                          activeFeatureIndex === index ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10 pointer-events-none'
+                        }`}
+                      >
+                        <div className="flex gap-4 items-start">
+                          <div className="w-12 h-12 rounded-full bg-dukka-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Icon className="w-6 h-6 text-dukka-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-1">{feature.title}</h4>
+                            <p className="text-gray-600 text-sm">{feature.description}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-semibold mb-1">{feature.title}</h4>
-                          <p className="text-gray-600 text-sm">{feature.description}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-              
-              {/* Indicateurs de navigation */}
-              <div className="flex justify-center mt-6 gap-2">
-                {features.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      i === activeFeatureIndex ? 'bg-dukka-primary w-6' : 'bg-gray-300'
-                    }`}
-                    onClick={() => setActiveFeatureIndex(i)}
-                  />
-                ))}
-              </div>
-            </motion.div>
-            
-            {/* Statistiques */}
-            <motion.div 
-              className="bg-gradient-to-br from-dukka-primary/5 to-dukka-primary/20 rounded-xl p-6"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <h3 className="text-lg font-semibold mb-4 text-gray-900">Résultats des marchands avec Dukka :</h3>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-dukka-primary">+45%</div>
-                  <div className="text-xs text-gray-600">ventes en plus</div>
-                </div>
-                <div className="bg-white rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-dukka-primary">60%</div>
-                  <div className="text-xs text-gray-600">temps gagné</div>
-                </div>
-                <div className="bg-white rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-dukka-primary">75%</div>
-                  <div className="text-xs text-gray-600">clients en plus</div>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* CTA */}
-            <motion.div 
-              className="bg-dukka-primary text-white rounded-xl p-6 text-center shadow-lg"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <h3 className="text-xl font-bold mb-3">Prêt à rejoindre Dukka ?</h3>
-              <p className="mb-6 text-white/90">Adoptez l'e-commerce conversationnelle et offrez à vos clients la meilleure expérience d'achat en ligne.</p>
-              <WaitlistButton variant="secondary" className="w-full justify-center" />
-            </motion.div>
-          </div>
-          
-          {/* Smartphone avec interface de chat - maintenant à droite */}
-          <div className="w-full md:w-auto">
-            <motion.div 
-              className="relative mx-auto w-[350px] h-[712px]"
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              {/* Cadre smartphone */}
-              <div className="absolute inset-0 bg-gray-900 rounded-[40px] shadow-xl overflow-hidden">
-                {/* Barre du haut avec notch */}
-                <div className="absolute top-0 left-0 right-0 h-6 bg-black z-10">
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-black rounded-b-xl"></div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
                 
-                {/* Écran du smartphone */}
-                <div className="absolute top-0 left-0 right-0 bottom-0 bg-white rounded-[38px] overflow-hidden m-[4px]">
-                  {/* Barre de statut */}
-                  <div className="h-12 bg-dukka-primary text-white flex items-center justify-between px-6 pt-6">
-                    <div className="text-xs font-medium">9:41</div>
-                    <div className="flex items-center space-x-1">
-                      <div className="h-2 w-2 rounded-full bg-white opacity-70"></div>
-                      <div className="h-2 w-2 rounded-full bg-white opacity-80"></div>
-                      <div className="h-2 w-2 rounded-full bg-white opacity-90"></div>
-                      <div className="h-2 w-2 rounded-full bg-white"></div>
-                    </div>
-                    <div className="text-xs font-medium">100%</div>
-                  </div>
-                  
-                  {/* Sélecteur de scénario */}
-                  <div className="h-14 flex items-center justify-between px-4 pt-6 pb-2 bg-white border-b border-gray-100">
-                    <div className="flex overflow-x-auto gap-2 no-scrollbar">
-                      {scenarios.map((scenario) => (
-                        <button
-                          key={scenario.id}
-                          onClick={() => handleScenarioChange(scenario)}
-                          className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
-                            activeScenario.id === scenario.id
-                              ? 'bg-dukka-primary text-white'
-                              : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                          }`}
-                        >
-                          {scenario.title}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Interface de chat */}
-                  <div className="h-[550px]">
-                    <ChatInterface
-                      messages={messages}
-                      isTyping={isTyping}
-                      showCheckout={showCheckout}
-                      onUserChoice={handleUserChoice}
-                      onAiResponse={handleAiResponse}
-                      chatRef={chatRef}
-                      scenario={activeScenario}
-                      totalAmount={calculateTotal()}
-                      inCheckoutFlow={inCheckoutFlow}
+                {/* Indicateurs de navigation */}
+                <div className="flex justify-center mt-6 gap-2">
+                  {features.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        i === activeFeatureIndex ? 'bg-dukka-primary w-6' : 'bg-gray-300'
+                      }`}
+                      onClick={() => setActiveFeatureIndex(i)}
                     />
+                  ))}
+                </div>
+              </motion.div>
+              
+              {/* Statistiques */}
+              <motion.div 
+                className="bg-gradient-to-br from-dukka-primary/5 to-dukka-primary/20 rounded-xl p-6"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">Résultats des marchands avec Dukka :</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-white rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-dukka-primary">+45%</div>
+                    <div className="text-xs text-gray-600">ventes en plus</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-dukka-primary">60%</div>
+                    <div className="text-xs text-gray-600">temps gagné</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-dukka-primary">75%</div>
+                    <div className="text-xs text-gray-600">clients en plus</div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* CTA */}
+              <motion.div 
+                className="bg-dukka-primary text-white rounded-xl p-6 text-center shadow-lg"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <h3 className="text-xl font-bold mb-3">Prêt à rejoindre Dukka ?</h3>
+                <p className="mb-6 text-white/90">Adoptez l'e-commerce conversationnelle et offrez à vos clients la meilleure expérience d'achat en ligne.</p>
+                <WaitlistButton variant="secondary" className="w-full justify-center" />
+              </motion.div>
+            </div>
+            
+            {/* Smartphone avec interface de chat - maintenant à droite */}
+            <div className="w-full md:w-auto">
+              <motion.div 
+                className="relative mx-auto w-[350px] h-[712px]"
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Cadre smartphone */}
+                <div className="absolute inset-0 bg-gray-900 rounded-[40px] shadow-xl overflow-hidden">
+                  {/* Barre du haut avec notch */}
+                  <div className="absolute top-0 left-0 right-0 h-6 bg-black z-10">
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-black rounded-b-xl"></div>
                   </div>
                   
-                  {/* "Home bar" du smartphone */}
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-300 rounded-full"></div>
+                  {/* Écran du smartphone */}
+                  <div className="absolute top-0 left-0 right-0 bottom-0 bg-white rounded-[38px] overflow-hidden m-[4px]">
+                    {/* Barre de statut */}
+                    <div className="h-12 bg-dukka-primary text-white flex items-center justify-between px-6 pt-6">
+                      <div className="text-xs font-medium">9:41</div>
+                      <div className="flex items-center space-x-1">
+                        <div className="h-2 w-2 rounded-full bg-white opacity-70"></div>
+                        <div className="h-2 w-2 rounded-full bg-white opacity-80"></div>
+                        <div className="h-2 w-2 rounded-full bg-white opacity-90"></div>
+                        <div className="h-2 w-2 rounded-full bg-white"></div>
+                      </div>
+                      <div className="text-xs font-medium">100%</div>
+                    </div>
+                    
+                    {/* Sélecteur de scénario */}
+                    <div className="h-14 flex items-center justify-between px-4 pt-6 pb-2 bg-white border-b border-gray-100">
+                      <div className="flex overflow-x-auto gap-2 no-scrollbar">
+                        {scenarios.map((scenario) => (
+                          <button
+                            key={scenario.id}
+                            onClick={() => handleScenarioChange(scenario)}
+                            className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
+                              activeScenario.id === scenario.id
+                                ? 'bg-dukka-primary text-white'
+                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                            }`}
+                          >
+                            {scenario.title}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Interface de chat */}
+                    <div className="h-[550px]">
+                      <ChatInterface
+                        messages={messages}
+                        isTyping={isTyping}
+                        showCheckout={showCheckout}
+                        onUserChoice={handleUserChoice}
+                        onAiResponse={handleAiResponse}
+                        chatRef={chatRef}
+                        scenario={activeScenario}
+                        totalAmount={calculateTotal()}
+                        inCheckoutFlow={inCheckoutFlow}
+                      />
+                    </div>
+                    
+                    {/* "Home bar" du smartphone */}
+                    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-300 rounded-full"></div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
-        </div>
+        </ClientOnly>
       </div>
     </section>
   );

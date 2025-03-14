@@ -1,8 +1,10 @@
+// src/app/(admin)/set-password/page.tsx
 'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
+import React from 'react'
 
 export default function SetPassword() {
   const [password, setPassword] = useState('')
@@ -20,7 +22,7 @@ export default function SetPassword() {
     return null
   }
 
-  const handleSetPassword = async (e) => {
+  const handleSetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -47,17 +49,24 @@ export default function SetPassword() {
 
     try {
       // Utiliser le token pour définir le mot de passe
+      // Pour Supabase v2, on doit utiliser verifyOtp sans le paramètre password directement
       const { error: supabaseError } = await supabase.auth.verifyOtp({
         token_hash: token,
-        type: 'invite',
-        password: password,
+        type: 'invite'
       })
 
       if (supabaseError) throw supabaseError
 
+      // Une fois le token vérifié, on peut mettre à jour le mot de passe
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: password
+      })
+
+      if (updateError) throw updateError
+
       // Rediriger vers la page de connexion après succès
       router.push('/admin/login?success=true')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error setting password:', error)
       setError('Erreur lors de la définition du mot de passe. Veuillez réessayer.')
     } finally {

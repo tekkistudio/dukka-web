@@ -1,3 +1,4 @@
+// src/components/dashboard/DashboardNavbar.tsx
 'use client'
 
 import React, { useState } from 'react';

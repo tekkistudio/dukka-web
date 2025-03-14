@@ -1,18 +1,21 @@
+// src/components/admin/DashboardCharts.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { Users, MessageCircle } from 'lucide-react'
-import Link from 'next/link'
-import dynamic from 'next/dynamic'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
-const DashboardCharts = dynamic(
-  () => import('@/components/admin/DashboardCharts'),
-  { ssr: false }
-)
+// Définir un type pour l'état des statistiques
+interface StatsState {
+  waitlistCount: number;
+  messagesCount: number;
+  loading: boolean;
+  error: string | null; // Permettre à error d'être une chaîne ou null
+}
 
-export default function DashboardStats() {
-  const [stats, setStats] = useState({
+export default function DashboardCharts() {
+  // Initialiser l'état avec le type correct
+  const [stats, setStats] = useState<StatsState>({
     waitlistCount: 0,
     messagesCount: 0,
     loading: true,
@@ -54,44 +57,46 @@ export default function DashboardStats() {
   }, [])
 
   if (stats.loading) {
-    return <div className="text-center py-4">Chargement des statistiques...</div>
+    return <div className="mt-12 bg-white rounded-lg shadow-lg p-6 text-center">Chargement des graphiques...</div>
   }
 
   if (stats.error) {
-    return <div className="text-red-500 text-center py-4">{stats.error}</div>
+    return <div className="mt-12 bg-white rounded-lg shadow-lg p-6 text-center text-red-500">{stats.error}</div>
   }
 
+  const data = [
+    {
+      name: 'Liste d\'attente',
+      value: stats.waitlistCount
+    },
+    {
+      name: 'Messages',
+      value: stats.messagesCount
+    }
+  ]
+
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Link href="/waitlist" className="block">
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-900">Liste d'attente</h3>
-              <Users className="h-4 w-4 text-gray-500" />
-            </div>
-            <div className="mt-2">
-              <div className="text-2xl font-bold">{stats.waitlistCount}</div>
-              <p className="text-xs text-gray-500">inscrits au total</p>
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/messages" className="block">
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-900">Messages reçus</h3>
-              <MessageCircle className="h-4 w-4 text-gray-500" />
-            </div>
-            <div className="mt-2">
-              <div className="text-2xl font-bold">{stats.messagesCount}</div>
-              <p className="text-xs text-gray-500">messages au total</p>
-            </div>
-          </div>
-        </Link>
+    <div className="mt-12 bg-white rounded-lg shadow-lg p-6">
+      <h3 className="text-lg font-medium text-gray-900 mb-6">Aperçu des données</h3>
+      <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="value" fill="#3490dc" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
-
-      <DashboardCharts />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { WaitlistButton } from '@/components/WaitlistButton'
 import { CheckCircle, Play, Bot, BarChart3, CreditCard } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { isBrowser } from '@/utils/browser'
 
 export function HeroSection() {
   // Tableau des différents textes à afficher en alternance
@@ -155,16 +156,27 @@ export function HeroSection() {
             
             {/* Dashboard réel */}
             <div className="relative border-l border-r border-gray-700 bg-white shadow-2xl">
-            <video
-              src="/videos/demo-dukka2.mp4"
-              poster="/images/dashboard/demo-dukka2.png" 
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-auto"
-              style={{ objectFit: 'cover' }}
-            />
+            {isBrowser() && (
+              <video
+                src="/videos/demo-dukka2.mp4"
+                poster="/images/dashboard/demo-dukka2.png" 
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto"
+                style={{ objectFit: 'cover' }}
+              />
+            )}
+            {!isBrowser() && (
+              <Image
+                src="/images/dashboard/demo-dukka2.png"
+                alt="Dashboard Dukka"
+                width={800}
+                height={600}
+                className="w-full h-auto"
+              />
+            )}
             </div>
             
             {/* Base de l'écran */}
