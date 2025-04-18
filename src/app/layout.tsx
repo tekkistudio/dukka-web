@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL('https://getdukka.com'), // Assure une bonne résolution des URLs
   title: {
-    default: 'Dukka - La Meilleure Alternative à Shopify et Woocommerce en Afrique',
+    default: 'Dukka - La Meilleure Alternative à Shopify en Afrique',
     template: '%s | Dukka'
   },
   description: 'Dukka réinvente l\'e-commerce pour l\'adapter à la réalité africaine, en permettant aux commerçants et marques de créer des boutiques en ligne où la conversation est au cœur de l\'expérience d\'achat.',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     url: 'https://getdukka.com',
     siteName: 'Dukka',
-    title: 'Dukka - La Meilleure Alternative à Shopify et Woocommerce en Afrique',
+    title: 'Dukka - La Meilleure Alternative à Shopify en Afrique',
     description: 'Dukka réinvente l\'e-commerce pour l\'adapter aux habitudes d\'achat des consommateurs en Afrique.',
     images: [
       {

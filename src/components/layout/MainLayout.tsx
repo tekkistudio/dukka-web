@@ -16,7 +16,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           <div className="container mx-auto h-full">
             <div className="relative flex items-center justify-center h-full px-4">
               <p className="text-sm font-medium">
-                La Meilleure Alternative à Shopify et Woocommerce en Afrique
+                La Meilleure Alternative à Shopify en Afrique
               </p>
               <button
                 onClick={() => setShowAnnouncement(false)}
