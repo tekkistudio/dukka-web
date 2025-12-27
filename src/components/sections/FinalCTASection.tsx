@@ -98,7 +98,7 @@ export default function FinalCTASection() {
             </div>
           </div>
 
-          {/* Trust logos */}
+          {/* Trust logos 
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -128,6 +128,7 @@ export default function FinalCTASection() {
               ))}
             </div>
           </motion.div>
+              */}
         </motion.div>
       </div>
     </section>
