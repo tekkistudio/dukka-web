@@ -1,76 +1,139 @@
+// src/app/(marketing)/page.tsx
+import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
-// Composant de chargement pour les sections
-const SectionLoading = ({ height = "400px" }: { height?: string }) => (
-  <div className={`min-h-[${height}] animate-pulse bg-gray-100 rounded-lg`}></div>
-);
+// Lazy load sections
+const NewHeroSection = dynamic(() => import('@/components/sections/NewHeroSection'), {
+  ssr: true,
+});
 
-// Chargement dynamique côté client uniquement des composants qui utilisent window
-const HeroSection = dynamic(
-  () => import('@/components/sections/HeroSection').then(mod => mod.HeroSection),
-  { 
+const ProblemSection = dynamic(
+  () => import('@/components/sections/ProblemSection'),
+  {
     ssr: false,
-    loading: () => <SectionLoading height="500px" />
+    loading: () => <SectionSkeleton />,
   }
 );
 
-// Les autres sections peuvent être chargées normalement avec Suspense
-const HowItWorksSection = dynamic(
-  () => import('@/components/sections/HowItWorksSection').then(mod => mod.HowItWorksSection),
-  { loading: () => <SectionLoading /> }
-);
-
-const FeaturesSection = dynamic(
-  () => import('@/components/sections/FeaturesSection').then(mod => mod.FeaturesSection),
-  { loading: () => <SectionLoading height="600px" /> }
-);
-
-// Ce composant doit être chargé côté client seulement
-const DemoSection = dynamic(
-  () => import('@/components/sections/DemoSection').then(mod => mod),
-  { 
+const FounderStorySection = dynamic(
+  () => import('@/components/sections/FounderStorySection'),
+  {
     ssr: false,
-    loading: () => <SectionLoading height="800px" />
+    loading: () => <SectionSkeleton />,
   }
 );
 
-const ComparisonSection = dynamic(
-  () => import('@/components/sections/ComparisonSection').then(mod => mod.ComparisonSection),
-  { loading: () => <SectionLoading height="600px" /> }
+const ChatsellerSection = dynamic(
+  () => import('@/components/sections/ChatsellerSection'),
+  {
+    ssr: false,
+    loading: () => <SectionSkeleton />,
+  }
 );
 
-const FAQSection = dynamic(
-  () => import('@/components/sections/FAQSection').then(mod => mod.FAQSection),
-  { loading: () => <SectionLoading /> }
+const PipelineSection = dynamic(
+  () => import('@/components/sections/PipelineSection'),
+  {
+    ssr: false,
+    loading: () => <SectionSkeleton />,
+  }
 );
+
+const WhyDukkaSection = dynamic(
+  () => import('@/components/sections/WhyDukkaSection'),
+  {
+    ssr: false,
+    loading: () => <SectionSkeleton />,
+  }
+);
+
+const FinalCTASection = dynamic(
+  () => import('@/components/sections/FinalCTASection'),
+  {
+    ssr: false,
+    loading: () => <SectionSkeleton height="small" />,
+  }
+);
+
+// Loading skeleton
+function SectionSkeleton({ height = 'normal' }: { height?: 'small' | 'normal' }) {
+  return (
+    <div className={`w-full ${height === 'small' ? 'py-16' : 'py-24'} flex items-center justify-center bg-white`}>
+      <div className="animate-pulse space-y-8 w-full max-w-7xl px-4">
+        <div className="h-12 bg-dukka-gray-200 rounded-xl w-3/4 mx-auto" />
+        <div className="h-6 bg-dukka-gray-200 rounded-lg w-1/2 mx-auto" />
+        {height === 'normal' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="h-64 bg-dukka-gray-200 rounded-2xl" />
+            <div className="h-64 bg-dukka-gray-200 rounded-2xl" />
+            <div className="h-64 bg-dukka-gray-200 rounded-2xl" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export const metadata: Metadata = {
+  title: 'Dukka - Les outils que Shopify n\'a pas créés pour l\'Afrique',
+  description:
+    "L'infrastructure e-commerce pensée pour l'Afrique. Chatseller (conseillère IA beauté), gestion des paiements Wave, transmission automatique aux livreurs.",
+  keywords: [
+    'e-commerce Afrique',
+    'Shopify Afrique',
+    'WooCommerce Afrique',
+    'Chatseller',
+    'conseillère beauté IA',
+    'paiement Wave',
+    'paiement à la livraison',
+    'e-commerce Sénégal',
+    'e-commerce Côte d\'Ivoire',
+  ],
+  openGraph: {
+    title: 'Dukka - Les outils que Shopify n\'a pas créés pour l\'Afrique',
+    description: 'L\'infrastructure e-commerce pensée pour l\'Afrique.',
+    type: 'website',
+    locale: 'fr_FR',
+    siteName: 'Dukka',
+  },
+};
 
 export default function HomePage() {
   return (
-    <main className="relative min-h-screen bg-white text-gray-900">
-      <Suspense fallback={<SectionLoading height="500px" />}>
-        <HeroSection />
+    <>
+      {/* Section 1: Hero */}
+      <NewHeroSection />
+
+      {/* Section 2: Problems */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <ProblemSection />
       </Suspense>
-      
-      <Suspense fallback={<SectionLoading />}>
-        <HowItWorksSection />
+
+      {/* Section 3: Founder Story */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <FounderStorySection />
       </Suspense>
-      
-      <Suspense fallback={<SectionLoading height="600px" />}>
-        <FeaturesSection />
+
+      {/* Section 4: Chatseller */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <ChatsellerSection />
       </Suspense>
-      
-      <Suspense fallback={<SectionLoading height="800px" />}>
-        <DemoSection />
+
+      {/* Section 5: Pipeline */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <PipelineSection />
       </Suspense>
-      
-      <Suspense fallback={<SectionLoading height="600px" />}>
-        <ComparisonSection />
+
+      {/* Section 6: Why Dukka */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <WhyDukkaSection />
       </Suspense>
-      
-      <Suspense fallback={<SectionLoading />}>
-        <FAQSection />
+
+      {/* Section 7: Final CTA */}
+      <Suspense fallback={<SectionSkeleton height="small" />}>
+        <FinalCTASection />
       </Suspense>
-    </main>
+    </>
   );
 }
