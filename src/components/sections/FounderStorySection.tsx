@@ -33,7 +33,7 @@ export default function FounderStorySection() {
   const videoUrl = ''; // URL de la vidéo YouTube ou Vimeo
 
   return (
-    <section className="relative py-20 lg:py-28 overflow-hidden bg-gray-50">
+    <section id="founder-story" className="relative py-20 lg:py-28 overflow-hidden bg-gray-50">
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-dukka-blue-50 rounded-full blur-3xl opacity-30" />
@@ -61,8 +61,8 @@ export default function FounderStorySection() {
 
             {/* Quote / Headline */}
             <div className="relative mb-8">
-              <Quote className="absolute -top-4 -left-2 w-10 h-10 text-dukka-blue-100" />
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-dukka-gray-900 leading-tight">
+              <Quote className="absolute -top-7 -left-4 w-10 h-10 text-dukka-blue-100" />
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-dukka-gray-900 leading-tight pt-2">
                 Nous avons géré{' '}
                 <span className="text-dukka-blue">+7 000 commandes</span> en Afrique.
               </h2>

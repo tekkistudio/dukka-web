@@ -76,9 +76,9 @@ function SectionSkeleton({ height = 'normal' }: { height?: 'small' | 'normal' })
 }
 
 export const metadata: Metadata = {
-  title: 'Dukka - Les outils que Shopify n\'a pas créés pour l\'Afrique',
+  title: 'Dukka - Des Solutions tech pour l\'e-commerce en Afrique',
   description:
-    "L'infrastructure e-commerce pensée pour l'Afrique. Chatseller (conseillère IA beauté), gestion des paiements Wave, transmission automatique aux livreurs.",
+    "Nous développons les outils que Shopify n\'a pas créés pour l\'Afrique. Chatseller, gestion des paiements Wave, transmission aux livreurs - des solutions qui s\'intègrent à votre boutique existante.",
   keywords: [
     'e-commerce Afrique',
     'Shopify Afrique',
@@ -91,8 +91,8 @@ export const metadata: Metadata = {
     'e-commerce Côte d\'Ivoire',
   ],
   openGraph: {
-    title: 'Dukka - Les outils que Shopify n\'a pas créés pour l\'Afrique',
-    description: 'L\'infrastructure e-commerce pensée pour l\'Afrique.',
+    title: 'Dukka - Des Solutions tech pour l\'e-commerce en Afrique',
+    description: 'Nous développons les outils que Shopify n\'a pas créés pour l\'Afrique. Chatseller, gestion des paiements Wave, transmission aux livreurs - des solutions qui s\'intègrent à votre boutique existante.',
     type: 'website',
     locale: 'fr_FR',
     siteName: 'Dukka',

@@ -9,15 +9,29 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <main className="min-h-screen bg-white">
-      <div className="pt-32 pb-16 bg-gradient-to-b from-blue-50/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+      {/* Hero Section */}
+      <section className="relative pt-32 lg:pt-40 pb-20 overflow-hidden bg-gradient-to-br from-blue-50 via-gray-50 to-dukka-blue-50">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-10 right-10 w-96 h-96 bg-dukka-blue-100 rounded-full blur-3xl opacity-40" />
+          <div className="absolute bottom-10 left-10 w-96 h-96 bg-dukka-orange-100 rounded-full blur-3xl opacity-30" />
+        </div>
+
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="text-center">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-dukka-blue-50 border border-dukka-blue-200 mb-8">
+              <span className="text-sm font-semibold text-dukka-blue">Conditions d'utilisation</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-dukka-gray-900 mb-6 leading-tight">
               Conditions Générales
             </h1>
+
+            <p className="text-xl text-dukka-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Les modalités d'utilisation de nos services et solutions e-commerce.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-3xl mx-auto px-4 py-16">
         <div className="prose prose-blue max-w-none">
@@ -34,14 +48,14 @@ export default function TermsPage() {
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">2. Description des services</h2>
             <p className="mb-4">
-              Dukka est une solution e-commerce conversationnelle qui permet aux commerçants de :
+              Dukka est une infrastructure e-commerce pensée pour l'Afrique qui propose des outils qui s'intègrent aux plateformes existantes (Shopify, WooCommerce, etc.) pour permettre aux commerçants de :
             </p>
             <ul className="list-disc pl-6 mb-4">
-              <li>Créer et gérer une boutique en ligne</li>
-              <li>Interagir avec les clients via un chatbot IA</li>
-              <li>Gérer les paiements en ligne</li>
-              <li>Suivre les commandes et les livraisons</li>
-              <li>Accéder à des analyses détaillées</li>
+              <li>Améliorer la conversion avec une conseillère IA (Chatseller)</li>
+              <li>Capturer des contacts WhatsApp de leurs clients</li>
+              <li>Automatiser la transmission des commandes aux livreurs</li>
+              <li>Gérer les paiements effectués via Wave, Orange Money ou en espèces</li>
+              <li>Réconcilier automatiquement les commandes et les paiements</li>
             </ul>
           </section>
 
@@ -60,14 +74,14 @@ export default function TermsPage() {
 
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">4. Conditions financières</h2>
-            <p className="mb-4">Les tarifs sont définis selon les formules suivantes :</p>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Formule Tambali : À partir de 9 000 FCFA/mois</li>
-              <li>Formule Tekki : À partir de 12 000 FCFA/mois</li>
-              <li>Formule Jambar : Sur devis</li>
-            </ul>
             <p className="mb-4">
-              Les prix sont indiqués en FCFA et peuvent être modifiés à tout moment. Toute modification tarifaire sera notifiée au client 30 jours avant son entrée en vigueur.
+              Les tarifs de nos solutions varient selon l'outil utilisé et le forfait choisi. Chaque solution (Chatseller, WhatsApp CRM, Delivery Manager, Order Automation) dispose de sa propre grille tarifaire.
+            </p>
+            <p className="mb-4">
+              Les prix sont disponibles sur notre site web et peuvent inclure une période d'essai gratuite selon la solution choisie. Les prix peuvent être modifiés à tout moment, avec une notification préalable de 30 jours pour les clients existants.
+            </p>
+            <p className="mb-4">
+              Le paiement s'effectue mensuellement ou annuellement selon la formule choisie, et peut être réglé par carte bancaire, mobile money ou virement bancaire.
             </p>
           </section>
 

@@ -30,7 +30,8 @@ const footerLinks = {
   entreprise: [
     { name: 'À propos', href: '/a-propos' },
     { name: 'Nos Solutions', href: '/solutions' },
-    { name: 'Etudes de cas', href: '/etudes-de-cas' },
+    { name: 'Problèmes résolus', href: '/#problems' },
+    { name: 'Notre histoire', href: '/#founder-story' },
   ],
   legal: [
     { name: 'Conditions générales', href: '/conditions' },
@@ -204,7 +205,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Newsletter */}
+        {/* Substack Newsletter CTA */}
         <div className="mt-12 pt-10 border-t border-white/10">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
@@ -215,17 +216,15 @@ export default function Footer() {
                 Recevez nos conseils e-commerce et soyez prévenu des lancements.
               </p>
             </div>
-            <div className="flex w-full lg:w-auto">
-              <input
-                type="email"
-                placeholder="votre@email.com"
-                className="flex-1 lg:w-64 px-4 py-3 rounded-l-lg bg-white/10 border border-white/20 text-white placeholder:text-gray-500 focus:outline-none focus:border-dukka-blue"
-              />
-              <button className="px-6 py-3 bg-dukka-blue text-white font-semibold rounded-r-lg hover:bg-dukka-blue-700 transition-colors flex items-center space-x-2">
-                <span>S&apos;inscrire</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+            <a
+              href="https://getdukka.substack.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 px-6 py-3 bg-dukka-blue text-white font-semibold rounded-lg hover:bg-dukka-blue-700 transition-all hover:shadow-lg group"
+            >
+              <span>Suivre notre blog</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
           </div>
         </div>
       </div>

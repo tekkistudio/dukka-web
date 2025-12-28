@@ -426,7 +426,7 @@ export default function NewHeroSection() {
             <div className="flex flex-wrap justify-center lg:justify-start gap-6 text-sm text-dukka-gray-500">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>7 jours gratuits</span>
+                <span>14 jours gratuits</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />

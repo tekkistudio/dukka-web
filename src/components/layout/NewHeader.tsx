@@ -43,7 +43,8 @@ const solutions = [
 ];
 
 const navLinks = [
-  { name: 'Études de cas', href: '/etudes-de-cas' },
+  { name: 'Problèmes résolus', href: '/#problems' },
+  { name: 'Notre histoire', href: '/#founder-story' },
   { name: 'À propos', href: '/a-propos' },
 ];
 
@@ -343,7 +344,7 @@ export default function NewHeader() {
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <p className="text-center text-sm text-gray-500 mt-3">
-                  7 jours gratuits · Sans carte bancaire
+                  14 jours gratuits · Sans carte bancaire
                 </p>
               </div>
             </motion.div>

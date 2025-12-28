@@ -9,15 +9,29 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-white">
-      <div className="pt-32 pb-16 bg-gradient-to-b from-blue-50/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+      {/* Hero Section */}
+      <section className="relative pt-32 lg:pt-40 pb-20 overflow-hidden bg-gradient-to-br from-blue-50 via-gray-50 to-dukka-blue-50">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-10 right-10 w-96 h-96 bg-dukka-blue-100 rounded-full blur-3xl opacity-40" />
+          <div className="absolute bottom-10 left-10 w-96 h-96 bg-dukka-orange-100 rounded-full blur-3xl opacity-30" />
+        </div>
+
+        <div className="relative z-10 max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="text-center">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-dukka-blue-50 border border-dukka-blue-200 mb-8">
+              <span className="text-sm font-semibold text-dukka-blue">Protection des données</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-dukka-gray-900 mb-6 leading-tight">
               Politique de Confidentialité
             </h1>
+
+            <p className="text-xl text-dukka-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Comment nous protégeons et gérons vos données personnelles.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-3xl mx-auto px-4 py-16">
         <div className="prose prose-blue max-w-none">
@@ -96,9 +110,12 @@ export default function PrivacyPage() {
             <p className="mb-4">
               Pour toute question concernant cette politique de confidentialité, vous pouvez nous contacter :
               <br />
-              Par email : [adresse email]
+              Par email : hello@getdukka.com
               <br />
-              Par téléphone : [numéro]
+              Par WhatsApp : +221 76 782 68 04
+            </p>
+            <p className="text-sm text-gray-500 mt-8">
+              Dernière mise à jour : {new Date().toLocaleDateString()}
             </p>
           </section>
         </div>

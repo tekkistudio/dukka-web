@@ -388,7 +388,7 @@ export default function ChatsellerSection() {
           <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white border border-pink-200 mb-6 shadow-sm">
             <Sparkles className="w-4 h-4 text-pink-500" />
             <span className="text-sm font-semibold text-pink-700">
-              Disponible maintenant — Essai gratuit 7 jours
+              Disponible maintenant — Essai gratuit 14 jours
             </span>
           </div>
 
@@ -494,7 +494,7 @@ export default function ChatsellerSection() {
           </div>
         )}
 
-        {/* Témoignage */}
+        {/* Témoignage 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -504,7 +504,7 @@ export default function ChatsellerSection() {
         >
           <div className="bg-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-pink-100 max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              {/* Photo */}
+              {/* Photo 
               <div className="flex-shrink-0">
                 <div className="relative">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-pink-200 shadow-lg">
@@ -522,7 +522,7 @@ export default function ChatsellerSection() {
                 </div>
               </div>
 
-              {/* Contenu */}
+              {/* Contenu 
               <div className="flex-1">
                 <div className="flex items-center space-x-1 mb-3">
                   {[...Array(5)].map((_, i) => (
@@ -551,6 +551,7 @@ export default function ChatsellerSection() {
             </div>
           </div>
         </motion.div>
+        */}
 
         {/* CTA */}
         <motion.div
@@ -571,7 +572,7 @@ export default function ChatsellerSection() {
           </a>
 
           <p className="mt-4 text-sm text-gray-600">
-            7 jours gratuits · Sans carte bancaire · Installation en 2 minutes
+            14 jours gratuits · Sans carte bancaire · Installation en 2 minutes
           </p>
         </motion.div>
       </div>

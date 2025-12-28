@@ -51,7 +51,7 @@ export default function FinalCTASection() {
 
           {/* Headline */}
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-6 leading-tight">
-            Prêt.e à connecter votre boutique
+            Prêt à connecter votre boutique
             <br />
             <span className="text-white/80">aux réalités africaines ?</span>
           </h2>
@@ -86,7 +86,7 @@ export default function FinalCTASection() {
           <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10">
             <div className="flex items-center space-x-2 text-white/80">
               <CheckCircle className="w-5 h-5 text-green-400" />
-              <span className="text-sm font-medium">7 jours gratuits</span>
+              <span className="text-sm font-medium">14 jours gratuits</span>
             </div>
             <div className="flex items-center space-x-2 text-white/80">
               <Shield className="w-5 h-5 text-green-400" />

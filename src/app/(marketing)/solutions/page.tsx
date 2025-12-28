@@ -535,7 +535,7 @@ export default function SolutionsPage() {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <p className="mt-4 text-sm text-gray-500">
-              7 jours gratuits · Sans carte bancaire · Installation en 2 minutes
+              14 jours gratuits · Sans carte bancaire · Installation en 2 minutes
             </p>
           </motion.div>
         </div>
@@ -678,7 +678,7 @@ export default function SolutionsPage() {
             <div className="flex flex-wrap justify-center items-center gap-6 mt-10 text-white/70">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span>7 jours gratuits</span>
+                <span>14 jours gratuits</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-5 h-5 text-green-400" />
